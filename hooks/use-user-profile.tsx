@@ -8,21 +8,23 @@ import type { Database } from "@/lib/supabase"
 type Profile = Database["public"]["Tables"]["profiles"]["Row"]
 type Link = Database["public"]["Tables"]["links"]["Row"]
 
-export function useUserProfile(username?: string) {
+export function useUserProfile(username?: string, userId?: string) {
   const [profile, setProfile] = useState<Profile | null>(null)
   const [links, setLinks] = useState<Link[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [isOwner, setIsOwner] = useState(false)
   const { toast } = useToast()
 
   useEffect(() => {
     if (username) {
       fetchProfile(username)
+    } else if (userId) {
+      fetchProfileByUserId(userId)
     } else {
-      // If no username provided, stop loading
+      // If no username or userId provided, stop loading
       setLoading(false)
     }
-  }, [username])
+  }, [username, userId])
 
   const fetchProfile = async (username: string) => {
     try {
@@ -77,6 +79,62 @@ export function useUserProfile(username?: string) {
       }
     } catch (error: any) {
       console.error("Error fetching profile:", error)
+      toast({
+        title: "Error",
+        description: "Failed to load profile",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const fetchProfileByUserId = async (userId: string) => {
+    try {
+      setLoading(true)
+
+      // Set a timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
+      })
+
+      // Get profile by user ID with timeout
+      const profilePromise = supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId)
+        .single()
+
+      const { data: profileData, error: profileError } = await Promise.race([
+        profilePromise,
+        timeoutPromise
+      ]) as any
+
+      if (profileError) throw profileError
+
+      setProfile(profileData)
+
+      // Get links with timeout
+      const linksPromise = supabase
+        .from("links")
+        .select("*")
+        .eq("user_id", profileData.id)
+        .order("position", { ascending: true })
+
+      const { data: linksData, error: linksError } = await Promise.race([
+        linksPromise,
+        timeoutPromise
+      ]) as any
+
+      if (linksError) throw linksError
+
+      setLinks(linksData || [])
+
+      // Check if current user is the owner
+      const { data: { user } } = await supabase.auth.getUser()
+      setIsOwner(user?.id === profileData.id)
+    } catch (error: any) {
+      console.error("Error fetching profile by user ID:", error)
       toast({
         title: "Error",
         description: "Failed to load profile",

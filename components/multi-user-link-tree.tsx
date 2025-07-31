@@ -40,7 +40,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     addLink,
     updateLink,
     deleteLink,
-  } = useUserProfile(username)
+  } = useUserProfile(username, user?.id)
 
   useEffect(() => {
     // Set a timeout to prevent infinite loading
