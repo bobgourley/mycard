@@ -43,11 +43,24 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   } = useUserProfile(username)
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
+    // Set a timeout to prevent infinite loading
+    const loadingTimeout = setTimeout(() => {
+      console.warn('Supabase connection timeout - continuing without auth')
       setLoading(false)
-    })
+    }, 5000) // 5 second timeout
+
+    // Get initial session
+    supabase.auth.getSession()
+      .then(({ data: { session } }) => {
+        setUser(session?.user ?? null)
+        setLoading(false)
+        clearTimeout(loadingTimeout)
+      })
+      .catch((error) => {
+        console.error('Supabase auth error:', error)
+        setLoading(false)
+        clearTimeout(loadingTimeout)
+      })
 
     // Listen for auth changes
     const {
@@ -57,7 +70,10 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
       setLoading(false)
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(loadingTimeout)
+    }
   }, [])
 
   const handleSignOut = async () => {

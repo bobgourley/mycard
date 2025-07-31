@@ -18,6 +18,9 @@ export function useUserProfile(username?: string) {
   useEffect(() => {
     if (username) {
       fetchProfile(username)
+    } else {
+      // If no username provided, stop loading
+      setLoading(false)
     }
   }, [username])
 
@@ -25,33 +28,53 @@ export function useUserProfile(username?: string) {
     try {
       setLoading(true)
 
-      // Get profile
-      const { data: profileData, error: profileError } = await supabase
+      // Set a timeout to prevent infinite loading
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Profile fetch timeout')), 10000) // 10 second timeout
+      })
+
+      // Get profile with timeout
+      const profilePromise = supabase
         .from("profiles")
         .select("*")
         .eq("username", username)
         .single()
 
+      const { data: profileData, error: profileError } = await Promise.race([
+        profilePromise,
+        timeoutPromise
+      ]) as any
+
       if (profileError) throw profileError
 
       setProfile(profileData)
 
-      // Get links
-      const { data: linksData, error: linksError } = await supabase
+      // Get links with timeout
+      const linksPromise = supabase
         .from("links")
         .select("*")
         .eq("user_id", profileData.id)
         .order("position", { ascending: true })
+
+      const { data: linksData, error: linksError } = await Promise.race([
+        linksPromise,
+        timeoutPromise
+      ]) as any
 
       if (linksError) throw linksError
 
       setLinks(linksData || [])
 
       // Check if current user is the owner
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      setIsOwner(user?.id === profileData.id)
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+        setIsOwner(user?.id === profileData.id)
+      } catch (authError) {
+        console.warn('Auth check failed:', authError)
+        setIsOwner(false)
+      }
     } catch (error: any) {
       console.error("Error fetching profile:", error)
       toast({
