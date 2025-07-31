@@ -26,13 +26,19 @@ export function AuthForm() {
 
     try {
       // Check if username is available
-      const { data: existingUser } = await supabase
+      const { data: existingUsers, error: checkError } = await supabase
         .from("profiles")
         .select("username")
         .eq("username", username.toLowerCase())
-        .single()
+        .limit(1)
 
-      if (existingUser) {
+      // If there's an error other than "not found", handle it
+      if (checkError && checkError.code !== 'PGRST116') {
+        console.error('Username check error:', checkError)
+        // Continue with signup anyway
+      }
+
+      if (existingUsers && existingUsers.length > 0) {
         toast({
           title: "Username taken",
           description: "Please choose a different username",
@@ -42,7 +48,7 @@ export function AuthForm() {
         return
       }
 
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -53,11 +59,15 @@ export function AuthForm() {
         },
       })
 
-      if (error) throw error
+      if (error) {
+        console.error('Signup error:', error)
+        throw error
+      }
 
+      console.log('Signup successful:', data)
       toast({
-        title: "Check your email",
-        description: "We've sent you a confirmation link",
+        title: "Account created!",
+        description: "Welcome to v0.me! You can now create your profile.",
       })
     } catch (error: any) {
       toast({

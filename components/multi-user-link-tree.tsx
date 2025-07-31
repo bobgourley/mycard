@@ -132,8 +132,12 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     setIsEditMode(!isEditMode)
   }
 
+  // Debug logging
+  console.log('MultiUserLinkTree render:', { loading, profileLoading, user: !!user, username, profile: !!profile })
+
   // Show loading state
   if (loading || profileLoading) {
+    console.log('Showing loading spinner:', { loading, profileLoading })
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
@@ -143,7 +147,24 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
 
   // Show auth form if no user and no username provided (home page)
   if (!user && !username) {
+    console.log('Showing AuthForm:', { user: !!user, username })
     return <AuthForm />
+  }
+
+  // Handle case where user is logged in but has no profile yet
+  if (user && !username && !profile) {
+    console.log('User logged in but no profile found, redirecting to create profile')
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-2">Welcome!</h1>
+          <p className="text-muted-foreground mb-4">
+            Let's set up your profile. Please sign out and create a new account with a username.
+          </p>
+          <Button onClick={handleSignOut}>Sign Out & Start Over</Button>
+        </div>
+      </div>
+    )
   }
 
   // Show profile not found if username provided but no profile found
