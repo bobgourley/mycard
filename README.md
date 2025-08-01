@@ -1,15 +1,15 @@
-# Linktree Clone - v0.me
+# 123l.ink - Personal Link Page
 
 A modern, customizable link-in-bio platform built with Next.js, TypeScript, and Supabase. Create your personalized link page to share all your important links in one place.
 
-![v0.me Preview](https://via.placeholder.com/800x400/6366f1/ffffff?text=v0.me+Preview)
+![123l.ink Preview](https://via.placeholder.com/800x400/6366f1/ffffff?text=123l.ink+Preview)
 
 ## ✨ Features
 
 ### 🎯 **Core Features**
 - **Beautiful Landing Page** - Professional homepage explaining features and benefits
 - **User Authentication** - Secure signup/login with Supabase Auth
-- **Custom Profile Pages** - Personalized URLs (`v0.me/username`)
+- **Custom Profile Pages** - Personalized URLs (`123l.ink/username`)
 - **Unlimited Links** - Add, edit, delete, and reorder links
 - **Profile Images** - Upload photos with drag-and-drop support
 - **Theme Customization** - Multiple themes and color options
@@ -43,7 +43,7 @@ A modern, customizable link-in-bio platform built with Next.js, TypeScript, and 
 1. **Clone the repository:**
 ```bash
 git clone <repository-url>
-cd linktree-clone
+cd 123l-ink
      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
      user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
      title TEXT NOT NULL,

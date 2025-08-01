@@ -27,7 +27,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "v0.me",
+  title: "123l.ink",
   description: "Your personal link sharing platform",
     generator: 'v0.dev'
 }

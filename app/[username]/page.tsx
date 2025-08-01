@@ -10,8 +10,8 @@ interface UserPageProps {
 export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
   const decodedUsername = decodeURIComponent(params.username)
   return {
-    title: `@${decodedUsername} - v0.me`,
-    description: `Check out @${decodedUsername}'s links on v0.me`,
+    title: `@${decodedUsername} - 123l.ink`,
+    description: `Check out @${decodedUsername}'s links on 123l.ink`,
   }
 }
 

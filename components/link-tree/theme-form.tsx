@@ -183,7 +183,7 @@ export function ThemeForm({ profile, onUpdateSecondaryBg, currentTheme, onThemeC
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h3 className="text-lg font-medium">Theme Settings</h3>
-          <p className="text-sm text-muted-foreground">Customize the appearance of your v0.me page</p>
+          <p className="text-sm text-muted-foreground">Customize the appearance of your 123l.ink page</p>
         </div>
         <Button variant="outline" size="sm" onClick={handleResetDefaults} className="gap-1">
           Reset Defaults

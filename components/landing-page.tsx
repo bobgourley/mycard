@@ -35,7 +35,7 @@ export function LandingPage() {
             >
               ← Back to Home
             </Button>
-            <h1 className="text-2xl font-bold">Join v0.me</h1>
+            <h1 className="text-2xl font-bold">Join 123l.ink</h1>
             <p className="text-muted-foreground">Create your personalized link-in-bio page</p>
           </div>
           <AuthForm />
@@ -208,7 +208,7 @@ export function LandingPage() {
             </div>
             <h3 className="text-xl font-semibold mb-2">Share</h3>
             <p className="text-gray-600">
-              Get your personalized v0.me/username link and share it everywhere!
+              Get your personalized 123l.ink/username link and share it everywhere!
             </p>
           </div>
         </div>
@@ -219,7 +219,7 @@ export function LandingPage() {
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900 mb-4">
-              Why Choose v0.me?
+              Why Choose 123l.ink?
             </h2>
             <p className="text-xl text-gray-600">
               Join thousands of creators, businesses, and professionals
@@ -232,7 +232,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Perfect for Social Media</h3>
-                  <p className="text-gray-600">Use your v0.me link in Instagram, TikTok, Twitter, and LinkedIn bios.</p>
+                  <p className="text-gray-600">Use your 123l.ink link in Instagram, TikTok, Twitter, and LinkedIn bios.</p>
                 </div>
               </div>
 
@@ -289,7 +289,7 @@ export function LandingPage() {
             Ready to Create Your Link Hub?
           </h2>
           <p className="text-xl text-gray-600 mb-8">
-            Join thousands of users who have simplified their online presence with v0.me
+            Join thousands of users who have simplified their online presence with 123l.ink
           </p>
           <Button 
             size="lg" 
@@ -307,7 +307,7 @@ export function LandingPage() {
 
       {/* Footer */}
       <footer className="container mx-auto px-4 py-8 border-t border-gray-200 text-center text-gray-600">
-        <p>&copy; 2024 v0.me. Made with ❤️ for creators and professionals.</p>
+        <p>&copy; 2024 123l.ink. Made with ❤️ for creators and professionals.</p>
       </footer>
     </div>
   )

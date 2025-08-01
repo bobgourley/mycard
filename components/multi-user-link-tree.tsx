@@ -236,7 +236,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   return (
     <div className={cn("w-full max-w-3xl mx-auto", themeSettings.font)}>
       <div className="flex justify-between items-center mb-6 px-4">
-        <h1 className="text-2xl font-bold">{username ? `@${username}` : "v0.me"}</h1>
+        <h1 className="text-2xl font-bold">{username ? `@${username}` : "123l.ink"}</h1>
         <div className="flex gap-2">
           {user && (
             <>
@@ -299,6 +299,16 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
           />
         </div>
       )}
+      
+      {/* Footer link for organic growth */}
+      <div className="mt-8 text-center">
+        <a 
+          href="/" 
+          className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+        >
+          Get your own 123l.ink
+        </a>
+      </div>
     </div>
   )
 }

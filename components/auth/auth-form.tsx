@@ -71,7 +71,7 @@ export function AuthForm() {
       setSignupSuccess(true)
       toast({
         title: "Account created!",
-        description: "Welcome to v0.me! You can now create your profile.",
+        description: "Welcome to 123l.ink! You can now create your profile.",
       })
     } catch (error: any) {
       toast({
@@ -120,7 +120,7 @@ export function AuthForm() {
             <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
-            <CardTitle className="text-2xl text-green-600">Welcome to v0.me!</CardTitle>
+            <CardTitle className="text-2xl text-green-600">Welcome to 123l.ink!</CardTitle>
             <CardDescription>Your account has been created successfully</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -129,7 +129,7 @@ export function AuthForm() {
                 Your profile URL is ready:
               </p>
               <div className="p-3 bg-muted rounded-lg">
-                <code className="text-sm font-mono">v0.me/{successUsername}</code>
+                <code className="text-sm font-mono">123l.ink/{successUsername}</code>
               </div>
             </div>
             
@@ -168,7 +168,7 @@ export function AuthForm() {
     <div className="min-h-screen flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">v0.me</CardTitle>
+          <CardTitle className="text-2xl">123l.ink</CardTitle>
           <CardDescription>Create your personalized link page</CardDescription>
         </CardHeader>
         <CardContent>
@@ -219,7 +219,7 @@ export function AuthForm() {
                     placeholder="your-username"
                     required
                   />
-                  <p className="text-xs text-muted-foreground">Your profile will be available at v0.me/{username}</p>
+                  <p className="text-xs text-muted-foreground">Your profile will be available at 123l.ink/{username}</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="display-name">Display Name</Label>
