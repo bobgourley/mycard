@@ -28,6 +28,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   const [loading, setLoading] = useState(true)
   const [isEditMode, setIsEditMode] = useState(false)
   const [newLink, setNewLink] = useState({ title: "", url: "" })
+  const [pendingLinkOrder, setPendingLinkOrder] = useState<any[] | null>(null)
   
   // Check if current user is admin
   const isAdmin = user?.email === 'bob@bobgourley.com'
@@ -47,11 +48,42 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   } = useUserProfile(username, user?.id)
 
   // Define handleSave before using it in useDebouncedProfile
-  const handleSave = () => {
-    toast({
-      title: "Changes Saved!",
-      description: "Your profile changes have been saved successfully.",
-    })
+  const handleSave = async () => {
+    try {
+      // Save profile changes first
+      if (hasUnsavedChanges()) {
+        await manualSave()
+      }
+      
+      // Save link reordering if there are pending changes
+      if (pendingLinkOrder) {
+        const updatePromises = pendingLinkOrder.map((link, index) => 
+          supabase
+            .from('links')
+            .update({ position: index })
+            .eq('id', link.id)
+        )
+        
+        await Promise.all(updatePromises)
+        setPendingLinkOrder(null) // Clear pending changes
+      }
+      
+      toast({
+        title: "Changes Saved!",
+        description: "All your changes have been saved successfully.",
+      })
+      
+      // Refresh the page to show updated data
+      window.location.reload()
+      
+    } catch (error) {
+      console.error('Error saving changes:', error)
+      toast({
+        title: "Error",
+        description: "Failed to save changes. Please try again.",
+        variant: "destructive",
+      })
+    }
   }
 
   // Use debounced profile for better typing experience
@@ -137,31 +169,16 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     await updateLink(linkData.id, { title: linkData.title, url: linkData.url })
   }
 
-  const handleReorderLinks = async (reorderedLinks: any[]) => {
-    // Update positions in database
-    try {
-      const updatePromises = reorderedLinks.map((link, index) => 
-        supabase
-          .from('links')
-          .update({ position: index })
-          .eq('id', link.id)
-      )
-      
-      await Promise.all(updatePromises)
-      
-      // Refresh the links to get updated order
-      if (originalProfile) {
-        // This will trigger a re-fetch of links with updated positions
-        window.location.reload()
-      }
-    } catch (error) {
-      console.error('Error reordering links:', error)
-      toast({
-        title: "Error",
-        description: "Failed to reorder links",
-        variant: "destructive",
-      })
-    }
+  const handleReorderLinks = (reorderedLinks: any[]) => {
+    // Store the new link order locally without saving to database
+    // This will be saved when user clicks "Save Changes"
+    setPendingLinkOrder(reorderedLinks)
+    
+    // Show visual feedback that changes are pending
+    toast({
+      title: "Link order changed",
+      description: "Click 'Save Changes' to save your new link order",
+    })
   }
 
   const handleDeleteLink = async (linkId: string) => {
@@ -414,7 +431,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
               isOwner ? (
                 <EditView
                   profile={profileData}
-                  links={linksData}
+                  links={pendingLinkOrder || linksData}
                   newLink={newLink}
                   onProfileChange={handleProfileChange}
                   onProfileBlur={handleProfileBlur}
@@ -431,6 +448,8 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
                   onViewProfile={handleViewProfile}
                   onDeleteProfile={handleDeleteProfile}
                   isAdmin={isAdmin}
+                  hasUnsavedChanges={hasUnsavedChanges() || !!pendingLinkOrder}
+                  isSaving={isProfileSaving}
                 />
               ) : (
                 <div>Not authorized</div>

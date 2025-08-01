@@ -6,6 +6,7 @@ import { VerifiedBadge } from "@/components/verified-badge"
 import { LinkItem } from "@/components/link-item"
 import { useThemeSettings } from "@/hooks/use-theme-settings"
 import { cn } from "@/lib/utils"
+import Link from "next/link"
 import type { Profile } from "@/hooks/use-profile"
 import type { LinkItemProps } from "@/hooks/use-links"
 
@@ -49,6 +50,16 @@ export function ProfileView({ profile, links }: ProfileViewProps) {
             ) : (
               links.map((link) => <LinkItem key={link.id} {...link} isEditMode={false} />)
             )}
+          </div>
+
+          {/* Get your own 123l.ink link */}
+          <div className="mt-8 pt-4 border-t border-border/50">
+            <Link 
+              href="/" 
+              className="block text-center text-sm text-muted-foreground hover:text-primary transition-colors"
+            >
+              Get your own <span className="font-semibold">123l.ink</span>
+            </Link>
           </div>
         </div>
       </CardContent>

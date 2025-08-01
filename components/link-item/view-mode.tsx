@@ -18,6 +18,15 @@ export function ViewMode({ title, url }: ViewModeProps) {
   const { themeSettings, getThemeColors } = useThemeSettings()
   const isDarkTheme = theme === "dark"
 
+  // Normalize URL to ensure it has a protocol for proper linking
+  const normalizedUrl = useMemo(() => {
+    let normalized = url.trim()
+    if (!normalized.startsWith('http://') && !normalized.startsWith('https://')) {
+      normalized = 'https://' + normalized
+    }
+    return normalized
+  }, [url])
+
   // Memoize theme colors to prevent unnecessary recalculations
   const themeColors = useMemo(() => {
     return getThemeColors(themeSettings.colorTheme)
@@ -117,7 +126,7 @@ export function ViewMode({ title, url }: ViewModeProps) {
       }
     >
       <div
-        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
         style={{
           background: `linear-gradient(to right, ${dynamicStyles.gradientFrom}, transparent)`,
           transitionDuration: dynamicStyles.transitionDuration,
@@ -125,7 +134,7 @@ export function ViewMode({ title, url }: ViewModeProps) {
       ></div>
 
       <a
-        href={url}
+        href={normalizedUrl}
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
@@ -157,7 +166,7 @@ export function ViewMode({ title, url }: ViewModeProps) {
       </a>
 
       <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
-        <LinkItemActions url={url} />
+        <LinkItemActions url={normalizedUrl} />
       </div>
     </div>
   )
