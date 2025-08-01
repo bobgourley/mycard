@@ -64,6 +64,12 @@ export function LandingPage() {
       }
     }
     
+    // Ensure loading is never stuck - timeout fallback
+    const loadingTimeout = setTimeout(() => {
+      console.log('Loading timeout reached, forcing loading to false')
+      setLoading(false)
+    }, 3000)
+    
     getUser()
 
     // Listen for auth changes
@@ -102,7 +108,10 @@ export function LandingPage() {
       }
     })
 
-    return () => subscription.unsubscribe()
+    return () => {
+      subscription.unsubscribe()
+      clearTimeout(loadingTimeout)
+    }
   }, [])
 
   const handleEditProfile = () => {
@@ -199,17 +208,10 @@ export function LandingPage() {
                     </Button>
                   </>
                 )}
-                
-                {/* Fallback buttons - always ensure something is visible */}
-                {!loading && !user && (
-                  <noscript>
-                    <Button size="lg" className="text-lg px-8 py-3">
-                      Get Started Free
-                    </Button>
-                  </noscript>
-                )}
               </>
             )}
+            
+
             
 
           </div>
