@@ -8,16 +8,20 @@ interface UserPageProps {
 }
 
 export async function generateMetadata({ params }: UserPageProps): Promise<Metadata> {
+  const decodedUsername = decodeURIComponent(params.username)
   return {
-    title: `@${params.username} - v0.me`,
-    description: `Check out @${params.username}'s links on v0.me`,
+    title: `@${decodedUsername} - v0.me`,
+    description: `Check out @${decodedUsername}'s links on v0.me`,
   }
 }
 
 export default function UserPage({ params }: UserPageProps) {
+  // Decode the username to handle spaces and special characters
+  const decodedUsername = decodeURIComponent(params.username)
+  
   return (
     <main className="min-h-screen flex flex-col items-center justify-start p-4 pt-8 bg-secondary">
-      <MultiUserLinkTree username={params.username} />
+      <MultiUserLinkTree username={decodedUsername} />
     </main>
   )
 }
