@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { useToast } from "@/hooks/use-toast"
-import { Trash2, User, Shield, LogOut, Search, RefreshCw } from "lucide-react"
+import { Trash2, User, Shield, LogOut, Search, RefreshCw, ExternalLink, Eye } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
@@ -140,6 +140,11 @@ export default function AdminPage() {
     setIsAdmin(false)
     setIsAuthenticated(false)
     setAdminPassword("")
+  }
+
+  const viewProfile = (username: string) => {
+    const profileUrl = `${window.location.origin}/${username}`
+    window.open(profileUrl, '_blank')
   }
 
   const filteredProfiles = profiles.filter(profile =>
@@ -299,6 +304,14 @@ export default function AdminPage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => viewProfile(profile.username)}
+                      >
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Profile
+                      </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button variant="destructive" size="sm">
