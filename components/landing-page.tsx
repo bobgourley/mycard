@@ -171,7 +171,7 @@ export function LandingPage() {
                     <Button 
                       size="lg" 
                       variant="outline"
-                      onClick={() => window.open('/test', '_blank')}
+                      onClick={() => window.open('https://123l.ink/bob', '_blank')}
                       className="text-lg px-8 py-3"
                     >
                       View Demo
@@ -191,7 +191,7 @@ export function LandingPage() {
                     <Button 
                       size="lg" 
                       variant="outline"
-                      onClick={() => window.open('/test', '_blank')}
+                      onClick={() => window.open('https://123l.ink/bob', '_blank')}
                       className="text-lg px-8 py-3"
                     >
                       View Demo

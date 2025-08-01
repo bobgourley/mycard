@@ -68,27 +68,10 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     // Update local state immediately for responsive UI
     setLocalProfile(prev => ({ ...prev, ...updates } as Profile))
 
-    // For bio field, only accumulate changes but don't auto-save
-    // Save will happen on blur or manual save
-    if (updates.bio !== undefined) {
-      pendingChangesRef.current = { ...pendingChangesRef.current, ...updates }
-      // Don't set timeout for bio changes - only save on blur
-      return
-    }
-
-    // For other fields, use normal debounced save
+    // Accumulate pending changes but don't auto-save anything
+    // All saves will be manual via save button
     pendingChangesRef.current = { ...pendingChangesRef.current, ...updates }
-
-    // Clear existing timeout
-    if (saveTimeoutRef.current) {
-      clearTimeout(saveTimeoutRef.current)
-    }
-
-    // Set timeout for non-bio fields
-    saveTimeoutRef.current = setTimeout(() => {
-      debouncedSave(pendingChangesRef.current)
-    }, 1000) // 1s delay for non-bio fields
-  }, [localProfile, profile, debouncedSave])
+  }, [localProfile, profile])
 
   const handleProfileChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -104,16 +87,22 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     updateProfile({ [dbFieldName]: value } as Partial<Profile>)
   }, [updateProfile])
 
-  // Handle blur event to save immediately when user leaves the field
+  // No longer auto-save on blur - user must manually save
   const handleProfileBlur = useCallback(() => {
+    // This function is kept for compatibility but does nothing
+  }, [])
+
+  // Manual save function for user-triggered saves
+  const manualSave = useCallback(async () => {
     if (Object.keys(pendingChangesRef.current).length > 0) {
-      // Clear the timeout and save immediately
-      if (saveTimeoutRef.current) {
-        clearTimeout(saveTimeoutRef.current)
-      }
-      debouncedSave(pendingChangesRef.current)
+      await debouncedSave(pendingChangesRef.current)
     }
   }, [debouncedSave])
+
+  // Check if there are unsaved changes
+  const hasUnsavedChanges = useCallback(() => {
+    return Object.keys(pendingChangesRef.current).length > 0
+  }, [])
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -138,6 +127,8 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     updateProfile,
     handleProfileChange,
     handleProfileBlur,
+    manualSave,
+    hasUnsavedChanges,
     isSaving,
   }
 }

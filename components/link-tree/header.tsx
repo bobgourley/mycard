@@ -10,8 +10,7 @@ interface HeaderProps {
 
 export function Header({ isEditMode, onToggleEditMode }: HeaderProps) {
   return (
-    <div className="flex justify-between items-center mb-6 px-4">
-      <h1 className="text-2xl font-bold">123l.ink</h1>
+    <div className="flex justify-end items-center mb-6 px-4">
       <div className="flex gap-2">
         <Button
           variant="outline"

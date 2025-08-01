@@ -48,21 +48,14 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
 
   // Use debounced profile for better typing experience
   const {
-    profile,
-    updateProfile,
-    handleProfileChange: handleDebouncedProfileChange,
+    profile: debouncedProfile,
+    updateProfile: updateDebouncedProfile,
+    handleProfileChange,
     handleProfileBlur,
-    isSaving,
-  } = useDebouncedProfile({
-    profile: originalProfile,
-    onProfileUpdate: (updatedProfile) => {
-      // Update the original profile in useUserProfile when debounced save completes
-      // This ensures consistency between the two hooks and prevents text loss
-      if (updatedProfile && originalProfile) {
-        updateProfileImmediate(updatedProfile)
-      }
-    }
-  })
+    manualSave,
+    hasUnsavedChanges,
+    isSaving: isProfileSaving,
+  } = useDebouncedProfile(originalProfile, handleSave)
 
   useEffect(() => {
     // Set a timeout to prevent infinite loading

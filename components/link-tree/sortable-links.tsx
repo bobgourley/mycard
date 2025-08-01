@@ -56,12 +56,8 @@ function SortableLinkItem({ link, onDelete, onUpdate, isEditMode = false }: Sort
   }
 
   if (!isEditMode) {
-    // In view mode, just render the link item normally without drag handles
-    return (
-      <div ref={setNodeRef} style={style}>
-        <LinkItem {...link} isEditMode={false} />
-      </div>
-    )
+    // In view mode, render the link item without any drag-and-drop interference
+    return <LinkItem {...link} isEditMode={false} />
   }
 
   return (
