@@ -125,7 +125,7 @@ export function LandingPage() {
 
   if (showAuth) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
+      <div className="min-h-screen flex flex-col items-center justify-start pt-16 p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="w-full max-w-md">
           <div className="text-center mb-6">
             <Button 
@@ -135,8 +135,8 @@ export function LandingPage() {
             >
               ← Back to Home
             </Button>
-            <h1 className="text-2xl font-bold">Join 123l.ink</h1>
-            <p className="text-muted-foreground">Create your personalized link-in-bio page</p>
+            <h1 className="text-2xl font-bold text-gray-900">Join 123l.ink</h1>
+            <p className="text-gray-700">Create your personalized link-in-bio page</p>
           </div>
           <AuthForm />
         </div>
@@ -163,51 +163,47 @@ export function LandingPage() {
             Perfect for social media bios, business cards, and everywhere you need to share multiple links.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {loading ? (
-              <div className="animate-pulse bg-gray-200 h-12 w-48 rounded-lg"></div>
+            {user ? (
+              <>
+                <Button 
+                  size="lg" 
+                  onClick={handleEditProfile}
+                  className="text-lg px-8 py-3"
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Edit Profile"}
+                  {!loading && <Edit className="ml-2 h-5 w-5" />}
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => window.open('https://123l.ink/bob', '_blank')}
+                  className="text-lg px-8 py-3"
+                >
+                  View Demo
+                  <Globe className="ml-2 h-5 w-5" />
+                </Button>
+              </>
             ) : (
               <>
-                {user ? (
-                  <>
-                    <Button 
-                      size="lg" 
-                      onClick={handleEditProfile}
-                      className="text-lg px-8 py-3"
-                    >
-                      Edit Profile
-                      <Edit className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button 
-                      size="lg" 
-                      variant="outline"
-                      onClick={() => window.open('https://123l.ink/bob', '_blank')}
-                      className="text-lg px-8 py-3"
-                    >
-                      View Demo
-                      <Globe className="ml-2 h-5 w-5" />
-                    </Button>
-                  </>
-                ) : (
-                  <>
-                    <Button 
-                      size="lg" 
-                      onClick={() => setShowAuth(true)}
-                      className="text-lg px-8 py-3"
-                    >
-                      Get Started Free
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Button>
-                    <Button 
-                      size="lg" 
-                      variant="outline"
-                      onClick={() => window.open('https://123l.ink/bob', '_blank')}
-                      className="text-lg px-8 py-3"
-                    >
-                      View Demo
-                      <Globe className="ml-2 h-5 w-5" />
-                    </Button>
-                  </>
-                )}
+                <Button 
+                  size="lg" 
+                  onClick={() => setShowAuth(true)}
+                  className="text-lg px-8 py-3"
+                  disabled={loading}
+                >
+                  {loading ? "Loading..." : "Get Started Free"}
+                  {!loading && <ArrowRight className="ml-2 h-5 w-5" />}
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => window.open('https://123l.ink/bob', '_blank')}
+                  className="text-lg px-8 py-3"
+                >
+                  View Demo
+                  <Globe className="ml-2 h-5 w-5" />
+                </Button>
               </>
             )}
             

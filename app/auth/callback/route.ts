@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}/auth/setup-profile`)
         }
 
-        // Existing user - redirect to their profile or dashboard
-        return NextResponse.redirect(`${origin}/${profile.username}`)
+        // Existing user - redirect back to homepage (they're already logged in)
+        return NextResponse.redirect(`${origin}/`)
       }
     } catch (error) {
       console.error('OAuth exchange error:', error)
