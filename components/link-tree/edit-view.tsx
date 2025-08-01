@@ -22,12 +22,14 @@ interface EditViewProps {
   links: LinkItemProps[]
   newLink: { title: string; url: string }
   onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  onProfileBlur?: () => void
   onToggleVerified: () => void
   onUpdateSecondaryBg: (bgColor: string) => void
   onNewLinkChange: (field: "title" | "url", value: string) => void
   onAddLink: () => void
   onDeleteLink: (id: string) => void
   onUpdateLink: (link: LinkItemProps) => void
+  onReorderLinks: (links: LinkItemProps[]) => void
   onImageUpload: (url: string) => void
   onImageRemove: () => void
   onSave: () => void
@@ -41,12 +43,14 @@ export function EditView({
   links,
   newLink,
   onProfileChange,
+  onProfileBlur,
   onToggleVerified,
   onUpdateSecondaryBg,
   onNewLinkChange,
   onAddLink,
   onDeleteLink,
   onUpdateLink,
+  onReorderLinks,
   onImageUpload,
   onImageRemove,
   onSave,
@@ -96,13 +100,15 @@ export function EditView({
               onAddLink={onAddLink}
               onDeleteLink={onDeleteLink}
               onUpdateLink={onUpdateLink}
+              onReorderLinks={onReorderLinks}
             />
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
             <ProfileForm 
               profile={profile} 
-              onProfileChange={onProfileChange} 
+              onProfileChange={onProfileChange}
+              onProfileBlur={onProfileBlur}
               onToggleVerified={onToggleVerified}
               onImageUpload={onImageUpload}
               onImageRemove={onImageRemove}

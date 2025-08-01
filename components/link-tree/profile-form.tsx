@@ -13,13 +13,14 @@ import type { Profile } from "@/hooks/use-profile"
 interface ProfileFormProps {
   profile: Profile
   onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
+  onProfileBlur?: () => void
   onToggleVerified: () => void
   onImageUpload: (url: string) => void
   onImageRemove: () => void
   isAdmin?: boolean
 }
 
-export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImageUpload, onImageRemove, isAdmin = false }: ProfileFormProps) {
+export function ProfileForm({ profile, onProfileChange, onProfileBlur, onToggleVerified, onImageUpload, onImageRemove, isAdmin = false }: ProfileFormProps) {
   const { themeSettings } = useThemeSettings()
 
   return (
@@ -30,7 +31,14 @@ export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImag
       </div>
       <div className="space-y-2">
         <Label htmlFor="bio">Bio</Label>
-        <Textarea id="bio" name="bio" rows={3} value={profile.bio} onChange={onProfileChange} />
+        <Textarea 
+          id="bio" 
+          name="bio" 
+          rows={3} 
+          value={profile.bio} 
+          onChange={onProfileChange}
+          onBlur={onProfileBlur}
+        />
       </div>
       <ImageUpload
         currentImageUrl={profile.avatar_url}
@@ -39,20 +47,7 @@ export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImag
         maxSizeInMB={5}
         allowedTypes={["image/jpeg", "image/png", "image/gif", "image/webp"]}
       />
-      {isAdmin && (
-        <div className="flex items-center space-x-2 mt-2">
-          <Label htmlFor="verified" className="cursor-pointer">
-            Verified Profile
-          </Label>
-          <input
-            type="checkbox"
-            id="verified"
-            checked={profile.verified}
-            onChange={onToggleVerified}
-            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-          />
-        </div>
-      )}
+
     </div>
   )
 }

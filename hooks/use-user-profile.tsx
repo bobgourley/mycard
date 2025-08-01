@@ -72,7 +72,9 @@ export function useUserProfile(username?: string, userId?: string) {
         const {
           data: { user },
         } = await supabase.auth.getUser()
-        setIsOwner(user?.id === profileData.id)
+        const ownershipStatus = user?.id === profileData.id
+        console.log('Ownership check:', { userId: user?.id, profileId: profileData.id, isOwner: ownershipStatus })
+        setIsOwner(ownershipStatus)
       } catch (authError) {
         console.warn('Auth check failed:', authError)
         setIsOwner(false)
@@ -132,7 +134,9 @@ export function useUserProfile(username?: string, userId?: string) {
 
       // Check if current user is the owner
       const { data: { user } } = await supabase.auth.getUser()
-      setIsOwner(user?.id === profileData.id)
+      const ownershipStatus = user?.id === profileData.id
+      console.log('Ownership check (by userId):', { userId: user?.id, profileId: profileData.id, isOwner: ownershipStatus })
+      setIsOwner(ownershipStatus)
     } catch (error: any) {
       console.error("Error fetching profile by user ID:", error)
       toast({
@@ -153,7 +157,19 @@ export function useUserProfile(username?: string, userId?: string) {
 
       if (error) throw error
 
-      setProfile({ ...profile, ...updates })
+      const updatedProfile = { ...profile, ...updates }
+      setProfile(updatedProfile)
+      
+      // Re-check ownership after profile update to ensure isOwner stays correct
+      try {
+        const { data: { user } } = await supabase.auth.getUser()
+        const ownershipStatus = user?.id === updatedProfile.id
+        console.log('Ownership re-check after update:', { userId: user?.id, profileId: updatedProfile.id, isOwner: ownershipStatus })
+        setIsOwner(ownershipStatus)
+      } catch (authError) {
+        console.warn('Auth re-check failed after update:', authError)
+      }
+      
       toast({
         title: "Profile updated",
         description: "Your changes have been saved",
@@ -170,13 +186,19 @@ export function useUserProfile(username?: string, userId?: string) {
   const addLink = async (title: string, url: string) => {
     if (!profile) return
 
+    // Normalize URL to ensure it has a protocol
+    let normalizedUrl = url.trim()
+    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = 'https://' + normalizedUrl
+    }
+
     try {
       const { data, error } = await supabase
         .from("links")
         .insert({
           user_id: profile.id,
           title,
-          url,
+          url: normalizedUrl,
           position: links.length,
         })
         .select()
@@ -199,6 +221,15 @@ export function useUserProfile(username?: string, userId?: string) {
   }
 
   const updateLink = async (linkId: string, updates: Partial<Link>) => {
+    // Normalize URL if it's being updated
+    if (updates.url) {
+      let normalizedUrl = updates.url.trim()
+      if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+        normalizedUrl = 'https://' + normalizedUrl
+      }
+      updates = { ...updates, url: normalizedUrl }
+    }
+
     try {
       const { error } = await supabase.from("links").update(updates).eq("id", linkId)
 

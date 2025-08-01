@@ -51,6 +51,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     profile,
     updateProfile,
     handleProfileChange: handleDebouncedProfileChange,
+    handleProfileBlur,
     isSaving,
   } = useDebouncedProfile({
     profile: originalProfile,
@@ -141,6 +142,33 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
 
   const handleUpdateLink = async (linkData: { id: string; title: string; url: string }) => {
     await updateLink(linkData.id, { title: linkData.title, url: linkData.url })
+  }
+
+  const handleReorderLinks = async (reorderedLinks: any[]) => {
+    // Update positions in database
+    try {
+      const updatePromises = reorderedLinks.map((link, index) => 
+        supabase
+          .from('links')
+          .update({ position: index })
+          .eq('id', link.id)
+      )
+      
+      await Promise.all(updatePromises)
+      
+      // Refresh the links to get updated order
+      if (originalProfile) {
+        // This will trigger a re-fetch of links with updated positions
+        window.location.reload()
+      }
+    } catch (error) {
+      console.error('Error reordering links:', error)
+      toast({
+        title: "Error",
+        description: "Failed to reorder links",
+        variant: "destructive",
+      })
+    }
   }
 
   const handleDeleteLink = async (linkId: string) => {
@@ -358,7 +386,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   return (
     <div className={cn("w-full max-w-3xl mx-auto", themeSettings.font)}>
       <div className="flex justify-between items-center mb-6 px-4">
-        <h1 className="text-2xl font-bold">{username ? `@${username}` : "123l.ink"}</h1>
+        {username && <h1 className="text-2xl font-bold">@{username}</h1>}
         <div className="flex gap-2">
           {user && (
             <>
@@ -403,12 +431,14 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
                   links={linksData}
                   newLink={newLink}
                   onProfileChange={handleProfileChange}
+                  onProfileBlur={handleProfileBlur}
                   onToggleVerified={handleToggleVerified}
                   onUpdateSecondaryBg={handleUpdateSecondaryBg}
                   onNewLinkChange={handleNewLinkChange}
                   onAddLink={handleAddLink}
                   onDeleteLink={handleDeleteLink}
                   onUpdateLink={handleUpdateLink}
+                  onReorderLinks={handleReorderLinks}
                   onImageUpload={handleImageUpload}
                   onImageRemove={handleImageRemove}
                   onSave={handleSave}

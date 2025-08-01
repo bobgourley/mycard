@@ -79,7 +79,7 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     // Set new timeout for debounced save
     saveTimeoutRef.current = setTimeout(() => {
       debouncedSave(pendingChangesRef.current)
-    }, 500) // 500ms delay for better responsiveness
+    }, 3000) // 3s delay to prevent interrupting typing
   }, [localProfile, profile, debouncedSave])
 
   const handleProfileChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -95,6 +95,17 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     const dbFieldName = fieldMapping[name] || name
     updateProfile({ [dbFieldName]: value } as Partial<Profile>)
   }, [updateProfile])
+
+  // Handle blur event to save immediately when user leaves the field
+  const handleProfileBlur = useCallback(() => {
+    if (Object.keys(pendingChangesRef.current).length > 0) {
+      // Clear the timeout and save immediately
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current)
+      }
+      debouncedSave(pendingChangesRef.current)
+    }
+  }, [debouncedSave])
 
   // Cleanup timeout on unmount
   useEffect(() => {
@@ -118,6 +129,7 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     profile: localProfile,
     updateProfile,
     handleProfileChange,
+    handleProfileBlur,
     isSaving,
   }
 }

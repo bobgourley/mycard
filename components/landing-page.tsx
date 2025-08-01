@@ -34,6 +34,7 @@ export function LandingPage() {
     const getUser = async () => {
       try {
         const { data: { user } } = await supabase.auth.getUser()
+        console.log('Initial user check:', { hasUser: !!user })
         setUser(user)
         
         if (user) {
@@ -50,6 +51,9 @@ export function LandingPage() {
           } else {
             setUserProfile(profile)
           }
+        } else {
+          // Explicitly clear profile when no user
+          setUserProfile(null)
         }
       } catch (error) {
         console.error('Error in getUser:', error)
@@ -65,6 +69,7 @@ export function LandingPage() {
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       try {
+        console.log('Auth state change:', { event, hasUser: !!session?.user })
         setUser(session?.user ?? null)
         
         if (session?.user) {
@@ -82,11 +87,18 @@ export function LandingPage() {
             setUserProfile(profile)
           }
         } else {
+          // Explicitly clear user profile on logout
+          console.log('Clearing user profile on logout')
           setUserProfile(null)
         }
+        
+        // Ensure loading is false after auth state change
+        setLoading(false)
       } catch (error) {
         console.error('Error in auth state change:', error)
+        setUser(null)
         setUserProfile(null)
+        setLoading(false)
       }
     })
 
@@ -185,6 +197,8 @@ export function LandingPage() {
                 </Button>
               </>
             )}
+            
+
           </div>
         </div>
       </section>

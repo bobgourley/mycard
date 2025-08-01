@@ -4,7 +4,7 @@ import { PlusCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { LinkItem } from "@/components/link-item"
+import { SortableLinks } from "@/components/link-tree/sortable-links"
 import { useThemeSettings } from "@/hooks/use-theme-settings"
 import { cn } from "@/lib/utils"
 import type { LinkItemProps } from "@/hooks/use-links"
@@ -16,9 +16,10 @@ interface LinksFormProps {
   onAddLink: () => void
   onDeleteLink: (id: string) => void
   onUpdateLink: (link: LinkItemProps) => void
+  onReorderLinks: (links: LinkItemProps[]) => void
 }
 
-export function LinksForm({ links, newLink, onNewLinkChange, onAddLink, onDeleteLink, onUpdateLink }: LinksFormProps) {
+export function LinksForm({ links, newLink, onNewLinkChange, onAddLink, onDeleteLink, onUpdateLink, onReorderLinks }: LinksFormProps) {
   const { themeSettings } = useThemeSettings()
 
   return (
@@ -50,15 +51,13 @@ export function LinksForm({ links, newLink, onNewLinkChange, onAddLink, onDelete
 
       <div className="space-y-2 mt-6">
         <h3 className="font-medium">Your Links</h3>
-        {links.length === 0 ? (
-          <p className="text-muted-foreground text-sm">No links added yet. Add your first link above.</p>
-        ) : (
-          <div className="space-y-2">
-            {links.map((link) => (
-              <LinkItem key={link.id} {...link} isEditMode={true} onDelete={onDeleteLink} onUpdate={onUpdateLink} />
-            ))}
-          </div>
-        )}
+        <SortableLinks
+          links={links}
+          onReorder={onReorderLinks}
+          onDelete={onDeleteLink}
+          onUpdate={onUpdateLink}
+          isEditMode={true}
+        />
       </div>
     </div>
   )

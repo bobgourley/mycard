@@ -25,13 +25,19 @@ export function useLinks(initialLinks: LinkItemProps[]) {
       return
     }
 
+    // Normalize URL to ensure it has a protocol
+    let normalizedUrl = newLink.url.trim()
+    if (!normalizedUrl.startsWith('http://') && !normalizedUrl.startsWith('https://')) {
+      normalizedUrl = 'https://' + normalizedUrl
+    }
+
     // Validate URL format
     try {
-      new URL(newLink.url)
+      new URL(normalizedUrl)
     } catch (e) {
       toast({
         title: "Invalid URL",
-        description: "Please enter a valid URL including http:// or https://",
+        description: "Please enter a valid URL (e.g., example.com or https://example.com)",
         variant: "destructive",
       })
       return
@@ -42,7 +48,7 @@ export function useLinks(initialLinks: LinkItemProps[]) {
       {
         id: Date.now().toString(),
         title: newLink.title,
-        url: newLink.url,
+        url: normalizedUrl,
       },
     ]
 
