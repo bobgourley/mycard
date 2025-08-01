@@ -419,7 +419,7 @@ export function LandingPage() {
             Ready to Create Your Link Hub?
           </h2>
           <p className="text-xl text-gray-700 mb-8 font-medium">
-            Join other who have simplified their online presence with 123l.ink
+            Join others who have simplified their online presence with 123l.ink
           </p>
           {user ? (
             <Button 
