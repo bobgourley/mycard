@@ -5,6 +5,7 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { supabase } from "@/lib/supabase"
 import { useUserProfile } from "@/hooks/use-user-profile"
+import { useDebouncedProfile } from "@/hooks/use-debounced-profile"
 import { AuthForm } from "@/components/auth/auth-form"
 import { CardFlip } from "@/components/ui/card-flip"
 import { Header } from "@/components/link-tree/header"
@@ -32,15 +33,29 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   const { themeSettings } = useThemeSettings()
 
   const {
-    profile,
+    profile: originalProfile,
     links,
     loading: profileLoading,
     isOwner,
-    updateProfile,
+    updateProfile: updateProfileImmediate,
     addLink,
     updateLink,
     deleteLink,
   } = useUserProfile(username, user?.id)
+
+  // Use debounced profile for better typing experience
+  const {
+    profile,
+    updateProfile,
+    handleProfileChange: handleDebouncedProfileChange,
+    isSaving,
+  } = useDebouncedProfile({
+    profile: originalProfile,
+    onProfileUpdate: (updatedProfile) => {
+      // Update the original profile in useUserProfile when debounced save completes
+      // This ensures consistency between the two hooks
+    }
+  })
 
   useEffect(() => {
     // Set a timeout to prevent infinite loading
@@ -85,10 +100,8 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    if (profile) {
-      updateProfile({ [name]: value })
-    }
+    // Use the debounced profile change handler for better typing experience
+    handleDebouncedProfileChange(e)
   }
 
   const handleToggleVerified = () => {

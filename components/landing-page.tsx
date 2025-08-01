@@ -1,10 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { AuthForm } from "@/components/auth/auth-form"
+import { supabase } from "@/lib/supabase"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
 import { 
   Link, 
   Palette, 
@@ -17,11 +19,64 @@ import {
   Globe,
   ArrowRight,
   CheckCircle,
-  Star
+  Star,
+  Edit
 } from "lucide-react"
 
 export function LandingPage() {
   const [showAuth, setShowAuth] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [userProfile, setUserProfile] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // Get initial user
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+      
+      if (user) {
+        // Fetch user profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', user.id)
+          .single()
+        setUserProfile(profile)
+      }
+      setLoading(false)
+    }
+    
+    getUser()
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      setUser(session?.user ?? null)
+      
+      if (session?.user) {
+        // Fetch user profile
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('id', session.user.id)
+          .single()
+        setUserProfile(profile)
+      } else {
+        setUserProfile(null)
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleEditProfile = () => {
+    if (userProfile?.username) {
+      window.location.href = `/${userProfile.username}`
+    } else {
+      // If no username, redirect to create profile
+      setShowAuth(true)
+    }
+  }
 
   if (showAuth) {
     return (
@@ -63,23 +118,49 @@ export function LandingPage() {
             Perfect for social media bios, business cards, and everywhere you need to share multiple links.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => setShowAuth(true)}
-              className="text-lg px-8 py-3"
-            >
-              Get Started Free
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => window.open('/test', '_blank')}
-              className="text-lg px-8 py-3"
-            >
-              View Demo
-              <Globe className="ml-2 h-5 w-5" />
-            </Button>
+            {loading ? (
+              <div className="animate-pulse bg-gray-200 h-12 w-48 rounded-lg"></div>
+            ) : user ? (
+              <>
+                <Button 
+                  size="lg" 
+                  onClick={handleEditProfile}
+                  className="text-lg px-8 py-3"
+                >
+                  Edit Profile
+                  <Edit className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => window.open('/test', '_blank')}
+                  className="text-lg px-8 py-3"
+                >
+                  View Demo
+                  <Globe className="ml-2 h-5 w-5" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button 
+                  size="lg" 
+                  onClick={() => setShowAuth(true)}
+                  className="text-lg px-8 py-3"
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => window.open('/test', '_blank')}
+                  className="text-lg px-8 py-3"
+                >
+                  View Demo
+                  <Globe className="ml-2 h-5 w-5" />
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -291,14 +372,25 @@ export function LandingPage() {
           <p className="text-xl text-gray-600 mb-8">
             Join thousands of users who have simplified their online presence with 123l.ink
           </p>
-          <Button 
-            size="lg" 
-            onClick={() => setShowAuth(true)}
-            className="text-lg px-12 py-4"
-          >
-            Create Your Free Page Now
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          {user ? (
+            <Button 
+              size="lg" 
+              onClick={handleEditProfile}
+              className="text-lg px-12 py-4"
+            >
+              Edit Your Profile
+              <Edit className="ml-2 h-5 w-5" />
+            </Button>
+          ) : (
+            <Button 
+              size="lg" 
+              onClick={() => setShowAuth(true)}
+              className="text-lg px-12 py-4"
+            >
+              Create Your Free Page Now
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          )}
           <p className="text-sm text-gray-500 mt-4">
             No credit card required • Set up in under 2 minutes
           </p>
