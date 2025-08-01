@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
 import { Trash2, User, Shield, LogOut, Search, RefreshCw, ExternalLink, Eye } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
@@ -151,6 +152,35 @@ export default function AdminPage() {
   const viewProfile = (username: string) => {
     const profileUrl = `${window.location.origin}/${username}`
     window.open(profileUrl, '_blank')
+  }
+
+  const toggleVerification = async (profileId: string, currentVerified: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ verified: !currentVerified })
+        .eq('id', profileId)
+
+      if (error) throw error
+
+      // Update local state
+      setProfiles(profiles.map(p => 
+        p.id === profileId 
+          ? { ...p, verified: !currentVerified }
+          : p
+      ))
+
+      toast({
+        title: "Verification Updated",
+        description: `Profile ${!currentVerified ? 'verified' : 'unverified'} successfully`,
+      })
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to update verification: " + error.message,
+        variant: "destructive",
+      })
+    }
   }
 
   const filteredProfiles = profiles.filter(profile =>
@@ -327,6 +357,21 @@ export default function AdminPage() {
                         <span>ID: {profile.id}</span>
                         <span>Created: {new Date(profile.created_at).toLocaleDateString()}</span>
                         <span>Updated: {new Date(profile.updated_at).toLocaleDateString()}</span>
+                      </div>
+                      
+                      {/* Verification Toggle */}
+                      <div className="flex items-center gap-2 mt-3 pt-3 border-t">
+                        <Checkbox 
+                          id={`verified-${profile.id}`}
+                          checked={profile.verified}
+                          onCheckedChange={() => toggleVerification(profile.id, profile.verified)}
+                        />
+                        <label 
+                          htmlFor={`verified-${profile.id}`} 
+                          className="text-sm font-medium cursor-pointer"
+                        >
+                          Verified Profile
+                        </label>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">

@@ -68,7 +68,15 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     // Update local state immediately for responsive UI
     setLocalProfile(prev => ({ ...prev, ...updates } as Profile))
 
-    // Accumulate pending changes
+    // For bio field, only accumulate changes but don't auto-save
+    // Save will happen on blur or manual save
+    if (updates.bio !== undefined) {
+      pendingChangesRef.current = { ...pendingChangesRef.current, ...updates }
+      // Don't set timeout for bio changes - only save on blur
+      return
+    }
+
+    // For other fields, use normal debounced save
     pendingChangesRef.current = { ...pendingChangesRef.current, ...updates }
 
     // Clear existing timeout
@@ -76,10 +84,10 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
       clearTimeout(saveTimeoutRef.current)
     }
 
-    // Set new timeout for debounced save
+    // Set timeout for non-bio fields
     saveTimeoutRef.current = setTimeout(() => {
       debouncedSave(pendingChangesRef.current)
-    }, 3000) // 3s delay to prevent interrupting typing
+    }, 1000) // 1s delay for non-bio fields
   }, [localProfile, profile, debouncedSave])
 
   const handleProfileChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {

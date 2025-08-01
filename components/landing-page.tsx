@@ -156,45 +156,58 @@ export function LandingPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {loading ? (
               <div className="animate-pulse bg-gray-200 h-12 w-48 rounded-lg"></div>
-            ) : user ? (
-              <>
-                <Button 
-                  size="lg" 
-                  onClick={handleEditProfile}
-                  className="text-lg px-8 py-3"
-                >
-                  Edit Profile
-                  <Edit className="ml-2 h-5 w-5" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  onClick={() => window.open('/test', '_blank')}
-                  className="text-lg px-8 py-3"
-                >
-                  View Demo
-                  <Globe className="ml-2 h-5 w-5" />
-                </Button>
-              </>
             ) : (
               <>
-                <Button 
-                  size="lg" 
-                  onClick={() => setShowAuth(true)}
-                  className="text-lg px-8 py-3"
-                >
-                  Get Started Free
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  onClick={() => window.open('/test', '_blank')}
-                  className="text-lg px-8 py-3"
-                >
-                  View Demo
-                  <Globe className="ml-2 h-5 w-5" />
-                </Button>
+                {user ? (
+                  <>
+                    <Button 
+                      size="lg" 
+                      onClick={handleEditProfile}
+                      className="text-lg px-8 py-3"
+                    >
+                      Edit Profile
+                      <Edit className="ml-2 h-5 w-5" />
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      onClick={() => window.open('/test', '_blank')}
+                      className="text-lg px-8 py-3"
+                    >
+                      View Demo
+                      <Globe className="ml-2 h-5 w-5" />
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button 
+                      size="lg" 
+                      onClick={() => setShowAuth(true)}
+                      className="text-lg px-8 py-3"
+                    >
+                      Get Started Free
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </Button>
+                    <Button 
+                      size="lg" 
+                      variant="outline"
+                      onClick={() => window.open('/test', '_blank')}
+                      className="text-lg px-8 py-3"
+                    >
+                      View Demo
+                      <Globe className="ml-2 h-5 w-5" />
+                    </Button>
+                  </>
+                )}
+                
+                {/* Fallback buttons - always ensure something is visible */}
+                {!loading && !user && (
+                  <noscript>
+                    <Button size="lg" className="text-lg px-8 py-3">
+                      Get Started Free
+                    </Button>
+                  </noscript>
+                )}
               </>
             )}
             
