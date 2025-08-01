@@ -156,7 +156,7 @@ export function ViewMode({ title, url }: ViewModeProps) {
         <span className="flex-1">{title}</span>
       </a>
 
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
         <LinkItemActions url={url} />
       </div>
     </div>
