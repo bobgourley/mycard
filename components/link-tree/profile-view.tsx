@@ -30,7 +30,7 @@ export function ProfileView({ profile, links }: ProfileViewProps) {
       <CardContent className="p-6">
         <div className={cn("flex flex-col items-center space-y-4", themeSettings.font)}>
           <Avatar className="h-24 w-24">
-            <AvatarImage src={profile.avatarUrl || "/placeholder.svg"} alt={profile.name} />
+            <AvatarImage src={profile.avatar_url || "/placeholder.svg"} alt={profile.name} />
             <AvatarFallback>{profile.name.charAt(0)}</AvatarFallback>
           </Avatar>
           <div className="text-center">

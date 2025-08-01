@@ -4,6 +4,7 @@ import type React from "react"
 
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Button } from "@/components/ui/button"
 import { LinksForm } from "@/components/link-tree/links-form"
 import { ProfileForm } from "@/components/link-tree/profile-form"
 import { ThemeForm } from "@/components/link-tree/theme-form"
@@ -13,6 +14,7 @@ import type { Profile } from "@/hooks/use-profile"
 import type { LinkItemProps } from "@/hooks/use-links"
 import { useState } from "react"
 import { useTheme } from "next-themes"
+import { Eye, Save } from "lucide-react"
 
 interface EditViewProps {
   profile: Profile
@@ -27,6 +29,8 @@ interface EditViewProps {
   onUpdateLink: (link: LinkItemProps) => void
   onImageUpload: (url: string) => void
   onImageRemove: () => void
+  onSave: () => void
+  onViewProfile: () => void
 }
 
 export function EditView({
@@ -42,6 +46,8 @@ export function EditView({
   onUpdateLink,
   onImageUpload,
   onImageRemove,
+  onSave,
+  onViewProfile,
 }: EditViewProps) {
   const [activeTab, setActiveTab] = useState("links")
   const { themeSettings } = useThemeSettings()
@@ -58,6 +64,18 @@ export function EditView({
       style={{ opacity: themeSettings.effects.cardOpacity }}
     >
       <CardContent className="p-6">
+        {/* Action Buttons */}
+        <div className="flex gap-2 mb-4">
+          <Button onClick={onSave} className="flex-1">
+            <Save className="w-4 h-4 mr-2" />
+            Save Changes
+          </Button>
+          <Button onClick={onViewProfile} variant="outline" className="flex-1">
+            <Eye className="w-4 h-4 mr-2" />
+            View Profile
+          </Button>
+        </div>
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className={cn("w-full", themeSettings.font)}>
           <TabsList className="grid w-full grid-cols-3 mb-4">
             <TabsTrigger value="links">Links</TabsTrigger>

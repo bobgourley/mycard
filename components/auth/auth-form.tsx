@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
-import { Loader2 } from "lucide-react"
+import { Eye, Edit, Loader2, CheckCircle, ExternalLink } from "lucide-react"
 
 export function AuthForm() {
   const [loading, setLoading] = useState(false)
@@ -18,6 +18,8 @@ export function AuthForm() {
   const [password, setPassword] = useState("")
   const [username, setUsername] = useState("")
   const [displayName, setDisplayName] = useState("")
+  const [signupSuccess, setSignupSuccess] = useState(false)
+  const [successUsername, setSuccessUsername] = useState("")
   const { toast } = useToast()
 
   const handleSignUp = async (e: React.FormEvent) => {
@@ -65,6 +67,8 @@ export function AuthForm() {
       }
 
       console.log('Signup successful:', data)
+      setSuccessUsername(username.toLowerCase())
+      setSignupSuccess(true)
       toast({
         title: "Account created!",
         description: "Welcome to v0.me! You can now create your profile.",
@@ -105,6 +109,59 @@ export function AuthForm() {
     } finally {
       setLoading(false)
     }
+  }
+
+  // Show success screen after signup
+  if (signupSuccess) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <CardTitle className="text-2xl text-green-600">Welcome to v0.me!</CardTitle>
+            <CardDescription>Your account has been created successfully</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center space-y-2">
+              <p className="text-sm text-muted-foreground">
+                Your profile URL is ready:
+              </p>
+              <div className="p-3 bg-muted rounded-lg">
+                <code className="text-sm font-mono">v0.me/{successUsername}</code>
+              </div>
+            </div>
+            
+            <div className="space-y-3">
+              <Button 
+                className="w-full" 
+                onClick={() => window.open(`/${encodeURIComponent(successUsername)}`, '_blank')}
+              >
+                <Eye className="w-4 h-4 mr-2" />
+                View My Profile
+                <ExternalLink className="w-4 h-4 ml-2" />
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="w-full"
+                onClick={() => window.location.href = `/${encodeURIComponent(successUsername)}?edit=true`}
+              >
+                <Edit className="w-4 h-4 mr-2" />
+                Edit My Profile
+              </Button>
+            </div>
+            
+            <div className="text-center pt-4">
+              <p className="text-xs text-muted-foreground">
+                💡 Tip: Add this link to your social media bios!
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
 
   return (

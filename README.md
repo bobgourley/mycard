@@ -2,79 +2,48 @@
 
 A modern, customizable link-in-bio platform built with Next.js, TypeScript, and Supabase. Create your personalized link page to share all your important links in one place.
 
-## Features
+![v0.me Preview](https://via.placeholder.com/800x400/6366f1/ffffff?text=v0.me+Preview)
 
-- 🔐 **User Authentication** - Secure signup/signin with Supabase Auth
-- 👤 **Custom Profiles** - Personalized usernames, display names, bios, and avatars
-- 🔗 **Link Management** - Add, edit, delete, and reorder your links
-- 🎨 **Theme Customization** - Multiple themes and customization options
-- 📱 **Responsive Design** - Works perfectly on desktop and mobile
-- ⚡ **Fast Performance** - Built with Next.js for optimal speed
-- 🌐 **Custom URLs** - Access your page at `yourdomain.com/username`
+## ✨ Features
 
-## Tech Stack
+### 🎯 **Core Features**
+- **Beautiful Landing Page** - Professional homepage explaining features and benefits
+- **User Authentication** - Secure signup/login with Supabase Auth
+- **Custom Profile Pages** - Personalized URLs (`v0.me/username`)
+- **Unlimited Links** - Add, edit, delete, and reorder links
+- **Profile Images** - Upload photos with drag-and-drop support
+- **Theme Customization** - Multiple themes and color options
+- **Mobile Optimized** - Perfect on all devices
+- **Real-time Updates** - Instant changes without page refresh
 
-- **Framework**: Next.js 14 with TypeScript
-- **Styling**: Tailwind CSS + shadcn/ui components
-- **Database**: Supabase (PostgreSQL)
-- **Authentication**: Supabase Auth
-- **Deployment**: Vercel-ready
+### 🔧 **Advanced Features**
+- **Admin Panel** - Secure admin dashboard for user management
+- **Image Upload** - Supabase Storage integration with file validation
+- **URL Encoding** - Handles usernames with spaces and special characters
+- **Success Onboarding** - Clear next steps after account creation
+- **Professional UI** - Modern design with shadcn/ui components
+
+## 🏗️ Tech Stack
+
+- **Frontend**: Next.js 14, React 18, TypeScript, Tailwind CSS
+- **Backend**: Supabase (PostgreSQL, Authentication, Storage)
+- **UI Components**: shadcn/ui, Radix UI
 - **Icons**: Lucide React
+- **Deployment**: Vercel-ready
 
-## Getting Started
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
-- pnpm (recommended) or npm
-- Supabase account and project
+- Node.js 18+ and npm
+- Supabase account ([supabase.com](https://supabase.com))
 
 ### Installation
 
-1. **Clone the repository**
-   ```bash
-   git clone <your-repo-url>
-   cd linktree-clone
-   ```
-
-2. **Install dependencies**
-   ```bash
-   pnpm install
-   # or
-   npm install
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cp env.example .env.local
-   ```
-   
-   Edit `.env.local` and add your Supabase credentials:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   ```
-
-4. **Set up Supabase database**
-   
-   Run the following SQL in your Supabase SQL editor to create the required tables:
-
-   ```sql
-   -- Create profiles table
-   CREATE TABLE profiles (
-     id UUID REFERENCES auth.users ON DELETE CASCADE PRIMARY KEY,
-     username TEXT UNIQUE NOT NULL,
-     display_name TEXT,
-     bio TEXT,
-     avatar_url TEXT,
-     verified BOOLEAN DEFAULT FALSE,
-     theme_settings JSONB DEFAULT '{}',
-     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-   );
-
-   -- Create links table
-   CREATE TABLE links (
+1. **Clone the repository:**
+```bash
+git clone <repository-url>
+cd linktree-clone
      id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
      user_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
      title TEXT NOT NULL,

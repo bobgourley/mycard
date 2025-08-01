@@ -148,6 +148,20 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     }
   }
 
+  const handleSave = () => {
+    toast({
+      title: "Changes Saved!",
+      description: "Your profile changes have been saved successfully.",
+    })
+  }
+
+  const handleViewProfile = () => {
+    if (profile?.username) {
+      // Open profile in new tab
+      window.open(`/${encodeURIComponent(profile.username)}`, '_blank')
+    }
+  }
+
   const toggleEditMode = () => {
     setIsEditMode(!isEditMode)
   }
@@ -275,6 +289,8 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
                   onUpdateLink={handleUpdateLink}
                   onImageUpload={handleImageUpload}
                   onImageRemove={handleImageRemove}
+                  onSave={handleSave}
+                  onViewProfile={handleViewProfile}
                 />
               ) : (
                 <div>Not authorized</div>
