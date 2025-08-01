@@ -109,11 +109,11 @@ export function LandingPage() {
           </Badge>
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             One Link to Rule
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 to-purple-700 font-extrabold">
               {" "}Them All
             </span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-gray-700 mb-8 max-w-2xl mx-auto font-medium">
             Create a beautiful, customizable landing page that houses all your important links. 
             Perfect for social media bios, business cards, and everywhere you need to share multiple links.
           </p>
@@ -313,7 +313,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Perfect for Social Media</h3>
-                  <p className="text-gray-600">Use your 123l.ink link in Instagram, TikTok, Twitter, and LinkedIn bios.</p>
+                  <p className="text-gray-700">Use your 123l.ink link in Instagram, TikTok, Twitter, and LinkedIn bios.</p>
                 </div>
               </div>
 
@@ -321,7 +321,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Business Professional</h3>
-                  <p className="text-gray-600">Share your portfolio, contact info, and services in one clean page.</p>
+                  <p className="text-gray-700">Share your portfolio, contact info, and services in one clean page.</p>
                 </div>
               </div>
 
@@ -329,7 +329,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Content Creator Ready</h3>
-                  <p className="text-gray-600">Link to your YouTube, podcast, blog, store, and more in one place.</p>
+                  <p className="text-gray-700">Link to your YouTube, podcast, blog, store, and more in one place.</p>
                 </div>
               </div>
             </div>
@@ -339,7 +339,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Always Free</h3>
-                  <p className="text-gray-600">Core features are completely free forever. No hidden costs or limits.</p>
+                  <p className="text-gray-700">Core features are completely free forever. No hidden costs or limits.</p>
                 </div>
               </div>
 
@@ -347,7 +347,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Easy to Update</h3>
-                  <p className="text-gray-600">Add, remove, or reorder links anytime with our simple editor.</p>
+                  <p className="text-gray-700">Add, remove, or reorder links anytime with our simple editor.</p>
                 </div>
               </div>
 
@@ -355,7 +355,7 @@ export function LandingPage() {
                 <CheckCircle className="h-6 w-6 text-green-600 mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold">Professional Look</h3>
-                  <p className="text-gray-600">Clean, modern design that makes you look professional and trustworthy.</p>
+                  <p className="text-gray-700">Clean, modern design that makes you look professional and trustworthy.</p>
                 </div>
               </div>
             </div>
@@ -369,7 +369,7 @@ export function LandingPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
             Ready to Create Your Link Hub?
           </h2>
-          <p className="text-xl text-gray-600 mb-8">
+          <p className="text-xl text-gray-700 mb-8 font-medium">
             Join thousands of users who have simplified their online presence with 123l.ink
           </p>
           {user ? (
