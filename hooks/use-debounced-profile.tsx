@@ -66,8 +66,7 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     if (!profile) return
 
     // Update local state immediately for responsive UI
-    const updatedProfile = { ...localProfile, ...updates } as Profile
-    setLocalProfile(updatedProfile)
+    setLocalProfile(prev => ({ ...prev, ...updates } as Profile))
 
     // Accumulate pending changes
     pendingChangesRef.current = { ...pendingChangesRef.current, ...updates }

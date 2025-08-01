@@ -33,6 +33,7 @@ interface EditViewProps {
   onSave: () => void
   onViewProfile: () => void
   onDeleteProfile: () => void
+  isAdmin?: boolean
 }
 
 export function EditView({
@@ -51,6 +52,7 @@ export function EditView({
   onSave,
   onViewProfile,
   onDeleteProfile,
+  isAdmin = false,
 }: EditViewProps) {
   const [activeTab, setActiveTab] = useState("links")
   const { themeSettings } = useThemeSettings()
@@ -104,6 +106,7 @@ export function EditView({
               onToggleVerified={onToggleVerified}
               onImageUpload={onImageUpload}
               onImageRemove={onImageRemove}
+              isAdmin={isAdmin}
             />
             
             {/* Delete Profile Section */}

@@ -103,35 +103,40 @@ export default function AdminPage() {
 
   const deleteProfile = async (profileId: string, username: string) => {
     try {
-      // Delete associated links first
-      const { error: linksError } = await supabase
-        .from("links")
-        .delete()
-        .eq("user_id", profileId)
-
-      if (linksError) throw linksError
-
-      // Delete the profile
-      const { error: profileError } = await supabase
-        .from("profiles")
-        .delete()
-        .eq("id", profileId)
-
-      if (profileError) throw profileError
-
-      // Delete the user from auth (requires service role key in production)
-      // For now, we'll just delete the profile
+      // Get the current user's session token for API authentication
+      const { data: { session } } = await supabase.auth.getSession()
       
+      if (!session?.access_token) {
+        throw new Error('No valid session found')
+      }
+
+      // Call the server-side API to delete the user completely
+      const response = await fetch(`/api/admin/delete-user?userId=${profileId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete user')
+      }
+      
+      // Remove from local state only after successful deletion
       setProfiles(profiles.filter(p => p.id !== profileId))
       
       toast({
-        title: "Profile Deleted",
-        description: `Profile "${username}" has been deleted successfully`,
+        title: "User Deleted",
+        description: `User "${username}" has been permanently deleted`,
       })
     } catch (error: any) {
+      console.error('Delete user error:', error)
       toast({
         title: "Error",
-        description: "Failed to delete profile: " + error.message,
+        description: "Failed to delete user: " + error.message,
         variant: "destructive",
       })
     }

@@ -16,9 +16,10 @@ interface ProfileFormProps {
   onToggleVerified: () => void
   onImageUpload: (url: string) => void
   onImageRemove: () => void
+  isAdmin?: boolean
 }
 
-export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImageUpload, onImageRemove }: ProfileFormProps) {
+export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImageUpload, onImageRemove, isAdmin = false }: ProfileFormProps) {
   const { themeSettings } = useThemeSettings()
 
   return (
@@ -38,18 +39,20 @@ export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImag
         maxSizeInMB={5}
         allowedTypes={["image/jpeg", "image/png", "image/gif", "image/webp"]}
       />
-      <div className="flex items-center space-x-2 mt-2">
-        <Label htmlFor="verified" className="cursor-pointer">
-          Verified Profile
-        </Label>
-        <input
-          type="checkbox"
-          id="verified"
-          checked={profile.verified}
-          onChange={onToggleVerified}
-          className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
-        />
-      </div>
+      {isAdmin && (
+        <div className="flex items-center space-x-2 mt-2">
+          <Label htmlFor="verified" className="cursor-pointer">
+            Verified Profile
+          </Label>
+          <input
+            type="checkbox"
+            id="verified"
+            checked={profile.verified}
+            onChange={onToggleVerified}
+            className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+          />
+        </div>
+      )}
     </div>
   )
 }

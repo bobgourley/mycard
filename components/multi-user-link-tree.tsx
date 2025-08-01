@@ -28,6 +28,9 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   const [loading, setLoading] = useState(true)
   const [isEditMode, setIsEditMode] = useState(false)
   const [newLink, setNewLink] = useState({ title: "", url: "" })
+  
+  // Check if current user is admin
+  const isAdmin = user?.email === 'bob@bobgourley.com'
   const { toast } = useToast()
   const { theme } = useTheme()
   const { themeSettings } = useThemeSettings()
@@ -53,7 +56,10 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     profile: originalProfile,
     onProfileUpdate: (updatedProfile) => {
       // Update the original profile in useUserProfile when debounced save completes
-      // This ensures consistency between the two hooks
+      // This ensures consistency between the two hooks and prevents text loss
+      if (updatedProfile && originalProfile) {
+        updateProfileImmediate(updatedProfile)
+      }
     }
   })
 
@@ -408,6 +414,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
                   onSave={handleSave}
                   onViewProfile={handleViewProfile}
                   onDeleteProfile={handleDeleteProfile}
+                  isAdmin={isAdmin}
                 />
               ) : (
                 <div>Not authorized</div>
