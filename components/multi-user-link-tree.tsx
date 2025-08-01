@@ -447,15 +447,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
         </div>
       )}
       
-      {/* Footer link for organic growth */}
-      <div className="mt-8 text-center">
-        <a 
-          href="/" 
-          className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
-        >
-          Get your own 123l.ink
-        </a>
-      </div>
+
     </div>
   )
 }
