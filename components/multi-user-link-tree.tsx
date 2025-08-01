@@ -46,6 +46,14 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     deleteLink,
   } = useUserProfile(username, user?.id)
 
+  // Define handleSave before using it in useDebouncedProfile
+  const handleSave = () => {
+    toast({
+      title: "Changes Saved!",
+      description: "Your profile changes have been saved successfully.",
+    })
+  }
+
   // Use debounced profile for better typing experience
   const {
     profile: debouncedProfile,
@@ -99,26 +107,18 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     })
   }
 
-  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    // Use the debounced profile change handler for better typing experience
-    handleDebouncedProfileChange(e)
-  }
+
 
   const handleToggleVerified = () => {
-    if (profile) {
-      updateProfile({ verified: !profile.verified })
+    if (originalProfile) {
+      updateProfileImmediate({ verified: !originalProfile.verified })
     }
   }
 
   const handleUpdateSecondaryBg = (bgColor: string) => {
-    if (profile) {
-      const currentSettings = profile.theme_settings || {}
-      updateProfile({
-        theme_settings: {
-          ...currentSettings,
-          secondaryBg: bgColor,
-        },
-      })
+    if (originalProfile) {
+      const updatedTheme = { ...originalProfile.theme_settings, secondary_bg: bgColor }
+      updateProfileImmediate({ theme_settings: updatedTheme })
     }
   }
 
@@ -179,8 +179,8 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   const handleImageRemove = () => {
-    if (profile) {
-      updateProfile({ avatar_url: null })
+    if (originalProfile) {
+      updateProfileImmediate({ avatar_url: null })
       toast({
         title: "Profile Image Removed",
         description: "Your profile image has been removed",
@@ -188,17 +188,10 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     }
   }
 
-  const handleSave = () => {
-    toast({
-      title: "Changes Saved!",
-      description: "Your profile changes have been saved successfully.",
-    })
-  }
-
   const handleViewProfile = () => {
-    if (profile?.username) {
+    if (originalProfile?.username) {
       // Open profile in new tab
-      window.open(`/${encodeURIComponent(profile.username)}`, '_blank')
+      window.open(`/${encodeURIComponent(originalProfile.username)}`, '_blank')
     }
   }
 
@@ -207,7 +200,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   const handleDeleteProfile = async () => {
-    if (!user || !profile) return
+    if (!user || !originalProfile) return
 
     try {
       // Delete all user's links first
@@ -258,7 +251,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   // Debug logging
-  console.log('MultiUserLinkTree render:', { loading, profileLoading, user: !!user, username, profile: !!profile })
+  console.log('MultiUserLinkTree render:', { loading, profileLoading, user: !!user, username, profile: !!originalProfile })
 
   // Show loading state
   if (loading || profileLoading) {
@@ -277,7 +270,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   // Handle case where user is logged in but has no profile yet
-  if (user && !username && !profile) {
+  if (user && !username && !originalProfile) {
     console.log('User logged in but no profile found, redirecting to create profile')
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
@@ -293,7 +286,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   // Show profile not found if username provided but no profile found
-  if (username && !profile) {
+  if (username && !originalProfile) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="max-w-md mx-auto text-center">
@@ -360,13 +353,13 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   // Convert database types to component props
-  const profileData = profile
+  const profileData = originalProfile
     ? {
-        name: profile.display_name || profile.username,
-        bio: profile.bio || "",
-        avatar_url: profile.avatar_url || "",
-        secondaryBg: profile.theme_settings?.secondaryBg || "bg-secondary",
-        verified: profile.verified,
+        name: originalProfile.display_name || originalProfile.username,
+        bio: originalProfile.bio || "",
+        avatar_url: originalProfile.avatar_url || "",
+        secondaryBg: originalProfile.theme_settings?.secondaryBg || "bg-secondary",
+        verified: originalProfile.verified,
       }
     : null
 
