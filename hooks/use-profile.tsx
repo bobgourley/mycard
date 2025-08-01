@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast"
 export interface Profile {
   name: string
   bio: string
-  avatarUrl: string
+  avatar_url: string
   secondaryBg: string
   verified: boolean
 }
@@ -41,12 +41,13 @@ export function useProfile(initialProfile: Profile) {
     updateProfile("secondaryBg", bgColor)
 
     // Apply the background color to the main element
-    document.querySelector("main")?.classList.remove(
-      ...document
-        .querySelector("main")
-        ?.classList.value.split(" ")
-        .filter((cls) => cls.startsWith("bg-")),
-    )
+    const mainElement = document.querySelector("main")
+    if (mainElement) {
+      const bgClasses = mainElement.classList.value
+        .split(" ")
+        .filter((cls) => cls.startsWith("bg-"))
+      mainElement.classList.remove(...bgClasses)
+    }
     document.querySelector("main")?.classList.add(bgColor)
   }
 

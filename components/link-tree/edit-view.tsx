@@ -25,6 +25,8 @@ interface EditViewProps {
   onAddLink: () => void
   onDeleteLink: (id: string) => void
   onUpdateLink: (link: LinkItemProps) => void
+  onImageUpload: (url: string) => void
+  onImageRemove: () => void
 }
 
 export function EditView({
@@ -38,6 +40,8 @@ export function EditView({
   onAddLink,
   onDeleteLink,
   onUpdateLink,
+  onImageUpload,
+  onImageRemove,
 }: EditViewProps) {
   const [activeTab, setActiveTab] = useState("links")
   const { themeSettings } = useThemeSettings()
@@ -73,7 +77,13 @@ export function EditView({
           </TabsContent>
 
           <TabsContent value="profile" className="space-y-4">
-            <ProfileForm profile={profile} onProfileChange={onProfileChange} onToggleVerified={onToggleVerified} />
+            <ProfileForm 
+              profile={profile} 
+              onProfileChange={onProfileChange} 
+              onToggleVerified={onToggleVerified}
+              onImageUpload={onImageUpload}
+              onImageRemove={onImageRemove}
+            />
           </TabsContent>
 
           <TabsContent value="theme" className="space-y-4">

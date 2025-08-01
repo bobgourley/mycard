@@ -128,6 +128,26 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     await deleteLink(linkId)
   }
 
+  const handleImageUpload = (url: string) => {
+    if (profile) {
+      updateProfile({ avatar_url: url })
+      toast({
+        title: "Profile Image Updated",
+        description: "Your profile image has been updated successfully",
+      })
+    }
+  }
+
+  const handleImageRemove = () => {
+    if (profile) {
+      updateProfile({ avatar_url: null })
+      toast({
+        title: "Profile Image Removed",
+        description: "Your profile image has been removed",
+      })
+    }
+  }
+
   const toggleEditMode = () => {
     setIsEditMode(!isEditMode)
   }
@@ -187,7 +207,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     ? {
         name: profile.display_name || profile.username,
         bio: profile.bio || "",
-        avatarUrl: profile.avatar_url || "",
+        avatar_url: profile.avatar_url || "",
         secondaryBg: profile.theme_settings?.secondaryBg || "bg-secondary",
         verified: profile.verified,
       }
@@ -253,6 +273,8 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
                   onAddLink={handleAddLink}
                   onDeleteLink={handleDeleteLink}
                   onUpdateLink={handleUpdateLink}
+                  onImageUpload={handleImageUpload}
+                  onImageRemove={handleImageRemove}
                 />
               ) : (
                 <div>Not authorized</div>

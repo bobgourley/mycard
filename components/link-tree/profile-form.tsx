@@ -5,6 +5,7 @@ import type React from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { ImageUpload } from "@/components/ui/image-upload"
 import { useThemeSettings } from "@/hooks/use-theme-settings"
 import { cn } from "@/lib/utils"
 import type { Profile } from "@/hooks/use-profile"
@@ -13,9 +14,11 @@ interface ProfileFormProps {
   profile: Profile
   onProfileChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void
   onToggleVerified: () => void
+  onImageUpload: (url: string) => void
+  onImageRemove: () => void
 }
 
-export function ProfileForm({ profile, onProfileChange, onToggleVerified }: ProfileFormProps) {
+export function ProfileForm({ profile, onProfileChange, onToggleVerified, onImageUpload, onImageRemove }: ProfileFormProps) {
   const { themeSettings } = useThemeSettings()
 
   return (
@@ -28,16 +31,13 @@ export function ProfileForm({ profile, onProfileChange, onToggleVerified }: Prof
         <Label htmlFor="bio">Bio</Label>
         <Textarea id="bio" name="bio" rows={3} value={profile.bio} onChange={onProfileChange} />
       </div>
-      <div className="space-y-2">
-        <Label htmlFor="avatarUrl">Avatar URL</Label>
-        <Input
-          id="avatarUrl"
-          name="avatarUrl"
-          value={profile.avatarUrl}
-          onChange={onProfileChange}
-          placeholder="https://example.com/avatar.jpg"
-        />
-      </div>
+      <ImageUpload
+        currentImageUrl={profile.avatar_url}
+        onImageUpload={onImageUpload}
+        onImageRemove={onImageRemove}
+        maxSizeInMB={5}
+        allowedTypes={["image/jpeg", "image/png", "image/gif", "image/webp"]}
+      />
       <div className="flex items-center space-x-2 mt-2">
         <Label htmlFor="verified" className="cursor-pointer">
           Verified Profile
