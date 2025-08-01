@@ -169,8 +169,8 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
   }
 
   const handleImageUpload = (url: string) => {
-    if (profile) {
-      updateProfile({ avatar_url: url })
+    if (originalProfile) {
+      updateProfileImmediate({ avatar_url: url })
       toast({
         title: "Profile Image Updated",
         description: "Your profile image has been updated successfully",
