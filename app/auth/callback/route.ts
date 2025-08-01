@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase'
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
+  const flow = searchParams.get('flow') // 'signup' or 'signin'
   const next = searchParams.get('next') ?? '/'
 
   if (code) {
@@ -28,8 +29,15 @@ export async function GET(request: NextRequest) {
           return NextResponse.redirect(`${origin}/auth/setup-profile`)
         }
 
-        // Existing user - redirect to their profile page (better UX than homepage)
-        return NextResponse.redirect(`${origin}/${profile.username}`)
+        // Existing user - redirect based on their intent
+        if (flow === 'signup') {
+          // User clicked "Get Started" -> "Sign Up" but already has account
+          // Take them to their profile page (what they expected from signup flow)
+          return NextResponse.redirect(`${origin}/${profile.username}`)
+        } else {
+          // User clicked "Sign In" - take them to their profile page
+          return NextResponse.redirect(`${origin}/${profile.username}`)
+        }
       }
     } catch (error) {
       console.error('OAuth exchange error:', error)

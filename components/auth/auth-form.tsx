@@ -28,13 +28,13 @@ export function AuthForm() {
   const usernameValidation = validateUsername(usernameInput)
   const transformationMessage = getTransformationMessage(usernameInput, usernameValidation.sanitized)
 
-  const handleGoogleSignIn = async () => {
+  const handleGoogleOAuth = async (flow: 'signup' | 'signin') => {
     try {
       setLoading(true)
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${window.location.origin}/auth/callback?flow=${flow}`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
@@ -60,6 +60,9 @@ export function AuthForm() {
       setLoading(false)
     }
   }
+
+  const handleGoogleSignUp = () => handleGoogleOAuth('signup')
+  const handleGoogleSignIn = () => handleGoogleOAuth('signin')
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -295,7 +298,7 @@ export function AuthForm() {
               <div className="space-y-4">
                 {/* Google Sign Up Button */}
                 <Button 
-                  onClick={handleGoogleSignIn} 
+                  onClick={handleGoogleSignUp} 
                   variant="outline" 
                   className="w-full" 
                   disabled={loading}
