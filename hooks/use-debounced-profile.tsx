@@ -80,12 +80,21 @@ export function useDebouncedProfile({ profile, onProfileUpdate }: UseDebouncedPr
     // Set new timeout for debounced save
     saveTimeoutRef.current = setTimeout(() => {
       debouncedSave(pendingChangesRef.current)
-    }, 1000) // 1 second delay
+    }, 500) // 500ms delay for better responsiveness
   }, [localProfile, profile, debouncedSave])
 
   const handleProfileChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    updateProfile({ [name]: value } as Partial<Profile>)
+    
+    // Map form field names to database field names
+    const fieldMapping: Record<string, keyof Profile> = {
+      'name': 'display_name',
+      'bio': 'bio',
+      'username': 'username'
+    }
+    
+    const dbFieldName = fieldMapping[name] || name
+    updateProfile({ [dbFieldName]: value } as Partial<Profile>)
   }, [updateProfile])
 
   // Cleanup timeout on unmount

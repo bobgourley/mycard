@@ -68,121 +68,127 @@ cd 123l-ink
      FOR UPDATE USING (auth.uid() = id);
 
    -- Create policies for links
-   CREATE POLICY "Links are viewable by everyone" ON links
-     FOR SELECT USING (true);
 
-   CREATE POLICY "Users can insert their own links" ON links
-     FOR INSERT WITH CHECK (auth.uid() = user_id);
+## Database Setup
 
-   CREATE POLICY "Users can update their own links" ON links
-     FOR UPDATE USING (auth.uid() = user_id);
+Run the SQL script in `scripts/create-tables.sql` in your Supabase SQL editor to create the necessary tables and triggers.
 
-   CREATE POLICY "Users can delete their own links" ON links
-     FOR DELETE USING (auth.uid() = user_id);
+## Google OAuth Setup
 
-   -- Create function to handle new user signup
-   CREATE OR REPLACE FUNCTION public.handle_new_user()
-   RETURNS TRIGGER AS $$
-   BEGIN
-     INSERT INTO public.profiles (id, username, display_name)
-     VALUES (
-       NEW.id,
-       NEW.raw_user_meta_data->>'username',
-       NEW.raw_user_meta_data->>'display_name'
-     );
-     RETURN NEW;
-   END;
-   $$ LANGUAGE plpgsql SECURITY DEFINER;
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable Google+ API
+4. Create OAuth 2.0 credentials
+5. Add authorized redirect URIs:
+   - `http://localhost:3000/auth/callback` (development)
+   - `https://your-domain.com/auth/callback` (production)
+6. Configure OAuth consent screen with your app details
 
-   -- Create trigger for new user signup
-   CREATE TRIGGER on_auth_user_created
-     AFTER INSERT ON auth.users
-     FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
-   ```
+## 🚀 Deployment to Vercel
 
-5. **Run the development server**
-   ```bash
-   pnpm dev
-   # or
-   npm run dev
-   ```
+### Step-by-Step Deployment:
 
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-## Deployment
-
-### Deploy to Vercel
-
-1. **Push to GitHub**
+1. **Push to GitHub**:
    ```bash
    git add .
-   git commit -m "Initial commit"
+   git commit -m "Deploy to production"
    git push origin main
    ```
 
-2. **Connect to Vercel**
+2. **Connect to Vercel**:
    - Go to [vercel.com](https://vercel.com)
    - Import your GitHub repository
-   - Add environment variables in Vercel dashboard:
+   - Vercel will auto-detect Next.js settings
+
+3. **Set Environment Variables in Vercel**:
+   - Go to Project Settings → Environment Variables
+   - Add:
      - `NEXT_PUBLIC_SUPABASE_URL`
      - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-3. **Deploy**
-   Vercel will automatically deploy your app. Your app will be available at `your-app-name.vercel.app`
+4. **Deploy**:
+   - Vercel deploys automatically on every push to main
+   - Custom domain can be added in Project Settings
 
-### Custom Domain (Optional)
-
-1. Add your custom domain in Vercel dashboard
-2. Update DNS settings as instructed by Vercel
-3. Your app will be available at your custom domain
+### ⚠️ **REMINDER: NO NETLIFY**
+This project is specifically configured for Vercel. Do not use Netlify deployment tools or create netlify.toml files.
 
 ## Project Structure
 
 ```
-├── app/                    # Next.js app directory
-│   ├── [username]/        # Dynamic user pages
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout
-│   └── page.tsx          # Home page
+├── app/                    # Next.js app router
+│   ├── [username]/        # Dynamic user profile pages
+│   ├── admin/             # Admin panel (restricted to bob@bobgourley.com)
+│   ├── auth/              # Authentication pages
+│   └── page.tsx           # Landing page
 ├── components/            # React components
-│   ├── auth/             # Authentication components
-│   ├── link-tree/        # Link tree components
-│   └── ui/               # shadcn/ui components
-├── hooks/                # Custom React hooks
-├── lib/                  # Utility functions and configs
-│   ├── supabase.ts       # Supabase client
-│   └── utils.ts          # Utility functions
-├── public/               # Static assets
-└── styles/               # Additional styles
+│   ├── auth/              # Authentication components
+│   ├── link-tree/         # Profile and link components
+│   └── ui/                # Reusable UI components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utility functions and configs
+├── scripts/               # Database setup scripts
+└── vercel.json            # Vercel configuration
 ```
 
-## Usage
+## Features
 
-1. **Sign Up**: Create an account with username, email, and password
-2. **Customize Profile**: Add display name, bio, and avatar
-3. **Add Links**: Add your important links with custom titles
-4. **Share**: Share your page at `yourdomain.com/username`
-5. **Customize**: Choose themes and customize appearance
+### User Features
+- Create account with Google OAuth or email/password
+- Customize profile with bio, avatar, and display name
+- Add/edit/delete links with drag-and-drop reordering
+- Real-time profile updates with debounced saving (no character loss)
+- Delete profile with confirmation dialog and complete data removal
+- Custom 404 pages with call-to-action for profile creation
+- Responsive design for all devices
+
+### Admin Features
+- Admin panel at `/admin` (restricted to bob@bobgourley.com only)
+- View all user profiles
+- Delete user profiles and associated data
+- Search and filter users
+- Email-based access control
+
+### Technical Features
+- Server-side rendering with Next.js
+- Real-time database updates with optimistic UI
+- Debounced profile saving to prevent data loss
+- Comprehensive error handling and user feedback
+- TypeScript for type safety
+- Custom 404 pages with conversion-focused design
+- Cascading deletion (links → profile → auth user)
+- Row Level Security (RLS) policies in Supabase
 
 ## Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL | Yes |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anonymous key | Yes |
+```bash
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
+
+## Deployment Checklist
+
+- [ ] Code pushed to GitHub
+- [ ] GitHub repo connected to Vercel
+- [ ] Environment variables set in Vercel dashboard
+- [ ] Custom domain configured (if applicable)
+- [ ] Google OAuth redirect URIs updated for production
+- [ ] Supabase RLS policies configured
+- [ ] Database tables and triggers created
 
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+6. **Remember**: Deploy via Vercel, not Netlify!
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see LICENSE file for details.
 
 ## Support
 

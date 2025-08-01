@@ -32,12 +32,10 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true)
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [searchTerm, setSearchTerm] = useState("")
-  const [adminPassword, setAdminPassword] = useState("")
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const { toast } = useToast()
 
-  // Admin password - in production, this should be in environment variables
-  const ADMIN_PASSWORD = "admin123" // Change this to a secure password
+  // Only allow bob@bobgourley.com to access admin
+  const ADMIN_EMAIL = "bob@bobgourley.com"
 
   useEffect(() => {
     checkUser()
@@ -49,9 +47,13 @@ export default function AdminPage() {
       setUser(user)
       
       if (user) {
-        // Check if user is admin (you can modify this logic)
-        const isUserAdmin = user.email === "admin@crucialpointllc.com" || user.email === "test@crucialpointllc.com"
+        // Only allow bob@bobgourley.com to access admin
+        const isUserAdmin = user.email === ADMIN_EMAIL
         setIsAdmin(isUserAdmin)
+        
+        if (isUserAdmin) {
+          loadProfiles()
+        }
       }
     } catch (error) {
       console.error("Error checking user:", error)
@@ -61,8 +63,9 @@ export default function AdminPage() {
   }
 
   const handleAdminLogin = () => {
-    if (adminPassword === ADMIN_PASSWORD) {
-      setIsAuthenticated(true)
+    // This function is no longer needed since we authenticate via email
+    // But keeping it for any edge cases where manual login might be needed
+    if (user?.email === ADMIN_EMAIL) {
       loadProfiles()
       toast({
         title: "Admin Access Granted",
@@ -71,7 +74,7 @@ export default function AdminPage() {
     } else {
       toast({
         title: "Access Denied",
-        description: "Invalid admin password",
+        description: "Only bob@bobgourley.com can access admin panel",
         variant: "destructive",
       })
     }
@@ -138,8 +141,6 @@ export default function AdminPage() {
     await supabase.auth.signOut()
     setUser(null)
     setIsAdmin(false)
-    setIsAuthenticated(false)
-    setAdminPassword("")
   }
 
   const viewProfile = (username: string) => {
@@ -164,49 +165,69 @@ export default function AdminPage() {
     )
   }
 
-  // Admin login screen
-  if (!isAuthenticated) {
+  // Admin access check
+  if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2">
               <Shield className="h-5 w-5" />
-              Admin Access
+              Admin Access Required
             </CardTitle>
             <CardDescription>
-              Enter admin password to access the management panel
+              Please sign in to access the admin panel
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <label htmlFor="admin-password" className="text-sm font-medium">
-                Admin Password
-              </label>
-              <Input
-                id="admin-password"
-                type="password"
-                value={adminPassword}
-                onChange={(e) => setAdminPassword(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleAdminLogin()}
-                placeholder="Enter admin password"
-              />
-            </div>
-            <Button onClick={handleAdminLogin} className="w-full">
-              <Shield className="h-4 w-4 mr-2" />
-              Access Admin Panel
+            <p className="text-sm text-muted-foreground text-center">
+              Admin access is restricted to authorized users only.
+            </p>
+            <Button onClick={() => window.location.href = '/'} className="w-full">
+              Go to Home Page
             </Button>
-            {user && (
-              <div className="text-center pt-4 border-t">
-                <p className="text-sm text-muted-foreground mb-2">
-                  Signed in as: {user.email}
-                </p>
-                <Button variant="outline" onClick={handleSignOut} size="sm">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Sign Out
-                </Button>
-              </div>
-            )}
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // Check if user is authorized admin
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="flex items-center justify-center gap-2 text-destructive">
+              <Shield className="h-5 w-5" />
+              Access Denied
+            </CardTitle>
+            <CardDescription>
+              You are not authorized to access this admin panel
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="text-center">
+              <p className="text-sm text-muted-foreground mb-2">
+                Signed in as: {user.email}
+              </p>
+              <p className="text-sm text-destructive">
+                Only bob@bobgourley.com can access this admin panel.
+              </p>
+            </div>
+            <div className="space-y-2">
+              <Button onClick={() => window.location.href = '/'} className="w-full">
+                Go to Home Page
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleSignOut}
+                className="w-full"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

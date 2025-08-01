@@ -5,6 +5,7 @@ import type React from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { LinksForm } from "@/components/link-tree/links-form"
 import { ProfileForm } from "@/components/link-tree/profile-form"
 import { ThemeForm } from "@/components/link-tree/theme-form"
@@ -14,7 +15,7 @@ import type { Profile } from "@/hooks/use-profile"
 import type { LinkItemProps } from "@/hooks/use-links"
 import { useState } from "react"
 import { useTheme } from "next-themes"
-import { Eye, Save } from "lucide-react"
+import { Eye, Save, Trash2 } from "lucide-react"
 
 interface EditViewProps {
   profile: Profile
@@ -31,6 +32,7 @@ interface EditViewProps {
   onImageRemove: () => void
   onSave: () => void
   onViewProfile: () => void
+  onDeleteProfile: () => void
 }
 
 export function EditView({
@@ -48,6 +50,7 @@ export function EditView({
   onImageRemove,
   onSave,
   onViewProfile,
+  onDeleteProfile,
 }: EditViewProps) {
   const [activeTab, setActiveTab] = useState("links")
   const { themeSettings } = useThemeSettings()
@@ -102,6 +105,37 @@ export function EditView({
               onImageUpload={onImageUpload}
               onImageRemove={onImageRemove}
             />
+            
+            {/* Delete Profile Section */}
+            <div className="pt-6 border-t border-destructive/20">
+              <h3 className="text-sm font-medium text-destructive mb-2">Danger Zone</h3>
+              <p className="text-xs text-muted-foreground mb-4">
+                Once you delete your profile, there is no going back. This will permanently delete your profile, all your links, and remove all data associated with your account.
+              </p>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete Profile
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your profile
+                      and remove all your data from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={onDeleteProfile} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                      Delete Profile
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </TabsContent>
 
           <TabsContent value="theme" className="space-y-4">
