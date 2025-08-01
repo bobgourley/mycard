@@ -63,7 +63,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
     manualSave,
     hasUnsavedChanges,
     isSaving: isProfileSaving,
-  } = useDebouncedProfile(originalProfile, handleSave)
+  } = useDebouncedProfile({ profile: originalProfile, onProfileUpdate: handleSave })
 
   useEffect(() => {
     // Set a timeout to prevent infinite loading
