@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://123l.ink/sitemap.xml
+
+# Block admin pages from search engines
+Disallow: /admin
+Disallow: /auth/setup-profile
+Disallow: /test
