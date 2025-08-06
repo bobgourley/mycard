@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { useToast } from "@/hooks/use-toast"
 import { Trash2, User, Shield, LogOut, Search, RefreshCw, ExternalLink, Eye } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { QRCodeGenerator } from "@/components/admin/qr-code-generator"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 
 interface Profile {
@@ -373,6 +374,12 @@ export default function AdminPage() {
                           Verified Profile
                         </label>
                       </div>
+                      
+                      {/* QR Code Section */}
+                      <QRCodeGenerator 
+                        username={profile.username}
+                        displayName={profile.display_name}
+                      />
                     </div>
                     <div className="flex items-center gap-2">
                       <Button 
