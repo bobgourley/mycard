@@ -448,8 +448,7 @@ export default function MultiUserLinkTree({ username }: MultiUserLinkTreeProps) 
                   onViewProfile={handleViewProfile}
                   onDeleteProfile={handleDeleteProfile}
                   isAdmin={isAdmin}
-                  hasUnsavedChanges={hasUnsavedChanges() || !!pendingLinkOrder}
-                  isSaving={isProfileSaving}
+                  username={username}
                 />
               ) : (
                 <div>Not authorized</div>

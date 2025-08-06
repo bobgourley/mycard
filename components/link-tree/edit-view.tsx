@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { QRCodeGenerator } from "@/components/admin/qr-code-generator"
 import { LinksForm } from "@/components/link-tree/links-form"
 import { ProfileForm } from "@/components/link-tree/profile-form"
 import { ThemeForm } from "@/components/link-tree/theme-form"
@@ -36,6 +37,7 @@ interface EditViewProps {
   onViewProfile: () => void
   onDeleteProfile: () => void
   isAdmin?: boolean
+  username?: string
 }
 
 export function EditView({
@@ -57,6 +59,7 @@ export function EditView({
   onViewProfile,
   onDeleteProfile,
   isAdmin = false,
+  username,
 }: EditViewProps) {
   const [activeTab, setActiveTab] = useState("links")
   const { themeSettings } = useThemeSettings()
@@ -114,6 +117,16 @@ export function EditView({
               onImageRemove={onImageRemove}
               isAdmin={isAdmin}
             />
+            
+            {/* QR Code Section */}
+            {username && (
+              <div className="pt-4 border-t">
+                <QRCodeGenerator 
+                  username={username}
+                  displayName={profile.name || username}
+                />
+              </div>
+            )}
             
             {/* Delete Profile Section */}
             <div className="pt-6 border-t border-destructive/20">
