@@ -20,31 +20,37 @@ export async function GET(request: NextRequest) {
 
       if (data.user) {
         // Check if user has a profile, if not redirect to profile setup
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('username')
-          .eq('id', data.user.id)
-          .single()
+        try {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('username')
+            .eq('id', data.user.id)
+            .single()
 
-        console.log('Profile lookup result:', { hasProfile: !!profile, username: profile?.username })
+          console.log('Profile lookup result:', { hasProfile: !!profile, username: profile?.username, error: profileError ? String(profileError) : null })
 
-        if (!profile) {
-          // New user from OAuth - redirect to profile setup
-          console.log('Redirecting new user to profile setup')
+          // If profile doesn't exist OR there's a database error, redirect to setup
+          if (!profile || profileError) {
+            console.log('Redirecting to profile setup - reason:', !profile ? 'no profile found' : `database error: ${String(profileError)}`)
+            return NextResponse.redirect(`${origin}/auth/setup-profile`)
+          }
+
+          // Existing user with valid profile - redirect based on their intent
+          const redirectUrl = `${origin}/${profile.username}`
+          if (flow === 'signup') {
+            // User clicked "Get Started" -> "Sign Up" but already has account
+            // Take them to their profile page (what they expected from signup flow)
+            console.log('Redirecting existing user from signup flow to profile:', redirectUrl)
+            return NextResponse.redirect(redirectUrl)
+          } else {
+            // User clicked "Sign In" - take them to their profile page
+            console.log('Redirecting existing user from signin flow to profile:', redirectUrl)
+            return NextResponse.redirect(redirectUrl)
+          }
+        } catch (dbError) {
+          // Database connection or other error - default to profile setup
+          console.error('Database error during profile lookup, redirecting to setup:', dbError)
           return NextResponse.redirect(`${origin}/auth/setup-profile`)
-        }
-
-        // Existing user - redirect based on their intent
-        const redirectUrl = `${origin}/${profile.username}`
-        if (flow === 'signup') {
-          // User clicked "Get Started" -> "Sign Up" but already has account
-          // Take them to their profile page (what they expected from signup flow)
-          console.log('Redirecting existing user from signup flow to profile:', redirectUrl)
-          return NextResponse.redirect(redirectUrl)
-        } else {
-          // User clicked "Sign In" - take them to their profile page
-          console.log('Redirecting existing user from signin flow to profile:', redirectUrl)
-          return NextResponse.redirect(redirectUrl)
         }
       }
     } catch (error) {
